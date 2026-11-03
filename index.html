@@ -1,0 +1,993 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI-компетенции МВД</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&subset=cyrillic,cyrillic-ext&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08166b; --bg2:#0b1f8c; --ink:#fff; --muted:rgba(225,231,255,.72); --dim:rgba(225,231,255,.5);
+  --card:rgba(122,140,255,.13); --card-b:rgba(170,184,255,.2); --card-hi:rgba(122,140,255,.24);
+  --blue:#1f3dff; --peri:#5b6cf0; --peri2:#8796ff; --green:#13b98b; --red:#f2482c; --white-card:#fff; --navy-ink:#0b1a6e;
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--ink);font-family:Montserrat,system-ui,sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased}
+body{background:#050e4a}
+
+/* ---------- stage ---------- */
+#viewport{position:fixed;inset:0}
+#deck{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center}
+.slide{position:absolute;inset:0;overflow:hidden;border-radius:6px;
+  background:
+    radial-gradient(900px 520px at 85% -10%, rgba(64,96,255,.35), transparent 60%),
+    radial-gradient(700px 500px at -5% 110%, rgba(110,80,255,.25), transparent 60%),
+    linear-gradient(160deg,var(--bg2),var(--bg) 55%,#071257);
+  opacity:0;visibility:hidden;transform:scale(1.015);transition:opacity .6s var(--ease),transform .8s var(--ease),visibility 0s .6s}
+.slide::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+  background-size:64px 64px;mask-image:radial-gradient(ellipse at center,#000 30%,transparent 80%)}
+.slide.active{opacity:1;visibility:visible;transform:none;transition:opacity .6s var(--ease),transform .8s var(--ease)}
+.slide.light{background:#f4f6ff}
+.slide.light::before{display:none}
+
+/* entrance animation */
+.slide [data-a]{opacity:0;transform:translateY(18px)}
+.slide.active [data-a]{animation:rise .7s var(--ease) forwards;animation-delay:calc(var(--d,0) * 90ms + 120ms)}
+.slide.active [data-a="fade"]{animation-name:fade}
+.slide.active [data-a="zoom"]{animation-name:zoom}
+.slide.active [data-a="left"]{animation-name:fromleft}
+@keyframes rise{to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0;transform:none}to{opacity:1;transform:none}}
+@keyframes zoom{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:none}}
+@keyframes fromleft{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.slide,.slide [data-a]{animation:none!important;transition:none!important;opacity:1;transform:none}}
+
+/* ---------- shared ---------- */
+.pad{position:absolute;inset:0;padding:44px 56px}
+.h{font-weight:800;font-size:26px;letter-spacing:.01em;text-transform:uppercase;line-height:1.15}
+.sub{color:var(--muted);font-size:15px;margin-top:8px;font-weight:500}
+.card{background:var(--card);border:1px solid var(--card-b);border-radius:18px;backdrop-filter:blur(6px)}
+.wcard{background:#fff;color:var(--navy-ink);border-radius:18px;box-shadow:0 20px 50px -20px rgba(0,0,0,.45)}
+.pill{display:inline-flex;align-items:center;justify-content:center;border-radius:10px;font-weight:700;letter-spacing:.04em}
+.ico{width:28px;height:28px;object-fit:contain}
+.badge{position:absolute;top:0;left:50%;translate:-50% 0;background:var(--blue);height:43px;padding:0 22px 0 18px;border-radius:0 0 12px 12px;font-size:17px;font-weight:500;display:flex;gap:10px;align-items:center;box-shadow:0 6px 24px rgba(31,61,255,.55);z-index:5}
+.badge img{width:20px;height:20px;filter:brightness(0) invert(1)}
+.gpt-chip{position:absolute;bottom:0;left:50%;translate:-50% 0;width:197px;height:52px;background:#fff;border-radius:18px 18px 0 0;display:grid;place-items:center;box-shadow:0 0 30px rgba(140,200,255,.35)}
+.gpt-chip img{height:30px}
+.orb{border-radius:50%;overflow:hidden;position:relative;box-shadow:0 30px 80px -10px rgba(120,90,255,.6),0 0 0 1px rgba(255,255,255,.15) inset}
+.orb video{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.9)}
+.center{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+
+/* ---------- cover ---------- */
+.cover .logos{position:absolute;top:44px;left:0;right:0;display:flex;justify-content:center;gap:56px;align-items:center}
+.cover .logos .mvd{display:flex;gap:12px;align-items:center;font-size:11px;font-weight:700;line-height:1.25;max-width:200px;text-transform:uppercase}
+.cover .logos img{height:52px}
+.cover .logos .dgsc{height:62px}
+.cover .orb{position:absolute;left:50%;top:50%;width:300px;height:300px;margin:-180px 0 0 -150px;opacity:.38;filter:brightness(.82) saturate(.9);box-shadow:0 30px 80px -10px rgba(120,90,255,.3)}
+.cover h1{position:relative;font-size:76px;font-weight:900;letter-spacing:.02em;line-height:1.05;text-shadow:0 8px 40px rgba(10,20,110,.6)}
+.cover .star{position:absolute;left:50%;bottom:58px;width:128px;margin-left:-64px;filter:drop-shadow(0 0 30px rgba(140,160,255,.8))}
+.slide.active .star{animation:zoom .7s var(--ease) .48s forwards,pulse 4s ease-in-out 1.3s infinite}
+@keyframes pulse{50%{transform:scale(1.07) rotate(4deg)}}
+
+/* ---------- section divider ---------- */
+.section .orb{width:200px;height:200px;margin-bottom:34px}
+.section h2{font-size:58px;font-weight:900;letter-spacing:.01em;max-width:1000px;line-height:1.1}
+.section .kicker{font-size:13px;letter-spacing:.3em;text-transform:uppercase;color:var(--peri2);font-weight:700;margin-bottom:16px}
+
+/* ---------- numbered secret ---------- */
+.secret .num{font-size:220px;font-weight:900;line-height:.8;background:linear-gradient(180deg,#9aa8ff,rgba(90,108,240,.15));-webkit-background-clip:text;background-clip:text;color:transparent}
+.secret h2{font-size:52px;font-weight:800;margin-top:24px}
+.secret .dots{display:flex;gap:10px;margin-top:40px}
+.secret .dots i{width:34px;height:6px;border-radius:3px;background:rgba(255,255,255,.18)}
+.secret .dots i.on{background:var(--peri2)}
+
+/* ---------- chrome ---------- */
+.num-hl{color:var(--blue);font-weight:800;font-variant-numeric:tabular-nums}
+[data-count]{font-variant-numeric:tabular-nums}
+/* импульсы по линиям: одна «капля» за цикл, плавно появляется и гаснет */
+.pulse{fill:none;stroke:#fff;stroke-width:3.5;stroke-linecap:round;stroke-dasharray:.12 3;stroke-dashoffset:-1;opacity:0;filter:drop-shadow(0 0 6px currentColor)}
+.slide.active .pulse{animation:flowout 2.4s cubic-bezier(.45,0,.55,1) var(--pd,2s) infinite}
+.slide.active .pulse.in{animation-name:flowin}
+@keyframes flowout{0%{stroke-dashoffset:-1;opacity:0}12%{opacity:1}80%{opacity:1}100%{stroke-dashoffset:.12;opacity:0}}
+@keyframes flowin{0%{stroke-dashoffset:.12;opacity:0}12%{opacity:1}80%{opacity:1}100%{stroke-dashoffset:-1;opacity:0}}
+@keyframes ping{0%{transform:scale(1);opacity:0}12%{opacity:.75}100%{transform:scale(1.75);opacity:0}}
+@media (prefers-reduced-motion:reduce){.pulse{display:none}}
+/* ---------- glassmorphism theme (slides with .gl) ---------- */
+.slide.gl{background:
+  radial-gradient(560px 400px at 16% 32%, rgba(70,100,255,.55), transparent 70%),
+  radial-gradient(560px 440px at 84% 78%, rgba(130,80,255,.45), transparent 70%),
+  radial-gradient(460px 320px at 62% 6%, rgba(30,140,255,.35), transparent 70%),
+  linear-gradient(160deg,var(--bg2),var(--bg) 55%,#071257)}
+.slide.gl :is(.wcard,.card,.f,.chip,.src,.slab,.slab19,.mdl,.gbox,.tab){
+  background:linear-gradient(135deg,rgba(255,255,255,.17),rgba(255,255,255,.05))!important;
+  border:1px solid rgba(255,255,255,.26)!important;color:#fff!important;
+  backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 20px 50px -22px rgba(0,0,30,.7)!important}
+.slide.gl .tile i{background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.06))!important;border:1px solid rgba(255,255,255,.3);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 rgba(255,255,255,.45)}
+.slide.gl .tile i img{filter:brightness(0) invert(1)}
+.slide.gl .gblue{background:linear-gradient(150deg,rgba(60,95,255,.6),rgba(40,60,230,.28))!important}
+.slide.gl .ggreen{background:linear-gradient(150deg,rgba(30,200,150,.8),rgba(19,160,115,.5))!important;border-color:rgba(120,255,210,.35)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 20px 50px -18px rgba(19,185,139,.7)!important}
+.slide.gl .gred{background:linear-gradient(150deg,rgba(255,95,60,.85),rgba(225,55,30,.55))!important;border-color:rgba(255,170,150,.4)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 20px 50px -18px rgba(242,72,44,.7)!important}
+.slide.gl .wcard span,.slide.gl .wcard p{color:rgba(255,255,255,.88)!important;border-color:rgba(255,255,255,.3)!important}
+.slide.gl .f>b{color:#fff}
+.slide.gl .f p{color:rgba(255,255,255,.72)}
+.slide.gl .num-hl{color:#b9c4ff}
+.slide.gl .chip b{color:#fff}
+.slide.gl .chip span{color:rgba(255,255,255,.7)}
+.slide.gl .src b{color:#b9c4ff}
+.slide.gl .src span{color:rgba(255,255,255,.85)}
+.slide.gl .src::after{background:#7b8fff}
+.slide.gl .tab{background:linear-gradient(150deg,rgba(60,95,255,.55),rgba(40,60,230,.3))!important}
+.slide.gl .cake div{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.5);color:#fff;backdrop-filter:blur(10px)}
+.slide.gl .cake div.top{background:linear-gradient(150deg,#5c78ff,#3148e6);border-color:transparent}
+.slide.gl .bub{background:linear-gradient(150deg,rgba(60,95,255,.6),rgba(40,60,230,.35));border:1px solid rgba(255,255,255,.3);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.slide.gl .inv{filter:brightness(0) invert(1)}
+.slide.gl .gpt-chip{background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.07));border:1px solid rgba(255,255,255,.3);border-bottom:0;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.slide.gl .mdl.m1{background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.03))!important;border-color:rgba(120,145,255,.7)!important}
+.slide.gl .mdl.m2{background:linear-gradient(135deg,rgba(60,95,255,.32),rgba(40,60,230,.14))!important}
+.slide.gl .mdl.m3{background:linear-gradient(135deg,rgba(60,95,255,.48),rgba(40,60,230,.22))!important}
+.slide.gl .mdl.m4{background:linear-gradient(135deg,rgba(70,110,255,.7),rgba(40,70,240,.35))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 20px 50px -14px rgba(40,80,255,.8)!important}
+#progress{position:fixed;left:0;bottom:0;height:3px;background:linear-gradient(90deg,var(--peri),#a77bff);transition:width .5s var(--ease);z-index:20}
+#hud{position:fixed;right:18px;bottom:14px;display:flex;gap:8px;align-items:center;z-index:20;font-size:12px;font-weight:600;color:rgba(255,255,255,.7);opacity:.35;transition:opacity .3s}
+#hud:hover,body.mouse #hud{opacity:1}
+#hud button{all:unset;cursor:pointer;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14)}
+#hud button:hover{background:rgba(255,255,255,.18)}
+#hud button:focus-visible{outline:2px solid var(--peri2)}
+#hud svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#count{min-width:54px;text-align:center;font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="deck">
+
+<!-- 1 · COVER -->
+<section class="slide cover active">
+  <div class="logos" data-a="fade">
+    <div class="mvd"><img src="assets/image6.webp" alt="Герб МВД"><span>Қазақстан Республикасы Ішкі істер министрлігі</span></div>
+    <img src="assets/image5.webp" alt="AI & Digital Ministry">
+    <img class="dgsc" src="assets/image4.webp" alt="DGSC AI Academy">
+  </div>
+  <div class="orb" data-a="zoom"><video src="assets/orb.mp4" muted loop playsinline preload="auto"></video></div>
+  <div class="center" style="position:absolute;inset:0;top:-60px"><h1 data-a style="--d:2">ЗАҢ МЕН ТӘРТІП</h1></div>
+  <img class="star" src="assets/image3.webp" alt="" data-a="zoom" style="--d:4">
+</section>
+
+<!-- 2 · AI-КОМПЕТЕНЦИИ -->
+<section class="slide gl"><div class="pad">
+  <div class="h" data-a>AI-компетенции:<br>новый стандарт государственной службы</div>
+  <div style="display:grid;grid-template-columns:330px 1fr;gap:28px;margin-top:34px;height:470px">
+    <div data-a="left" style="--d:1;border-radius:20px;overflow:hidden;background:#fff"><img src="assets/image7.webp" alt="Касым-Жомарт Токаев" style="width:100%;height:100%;object-fit:cover"></div>
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div class="card" data-a style="--d:2;padding:30px 34px;font-size:18px;line-height:1.55;color:var(--muted);flex:1;display:flex;flex-direction:column;gap:18px;justify-content:center">
+        <p>Президент Казахстана Касым-Жомарт Токаев объявил <b style="color:#fff">2026 год Годом цифровизации и искусственного интеллекта</b></p>
+        <p>Принят План мероприятий по проведению года цифровизации и искусственного интеллекта</p>
+        <p>Проводится системная работа по развитию AI-компетенций госслужащих и оперативному внедрению ИИ-технологий в работу госорганов</p>
+      </div>
+      <div class="wcard" data-a style="--d:3;padding:24px 34px;font-size:19px;font-weight:700;line-height:1.45">
+        <span style="color:var(--blue)">Цель</span> - ускорить внедрение технологий в экономику, государственное управление и повседневную жизнь
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 3 · DIGITAL QAZAQSTAN -->
+<section class="slide gl"><div class="pad" style="display:flex;flex-direction:column;padding-bottom:40px">
+  <style>
+    .dq .f{background:#fff;color:#0b0f2e;border-radius:20px;padding:22px 22px;min-height:0;display:flex;flex-direction:column;box-shadow:0 20px 50px -24px rgba(0,0,0,.5)}
+    .dq .f>img{width:38px;height:38px;margin-bottom:16px}
+    .dq .f>b{font-size:19px;line-height:1.2;font-weight:800}
+    .dq .f p{font-size:14.5px;line-height:1.45;color:#8b8fa6;margin-top:10px}
+    .dq .chip{background:#fff;border-radius:14px;padding:12px 8px;text-align:center;display:flex;flex-direction:column;justify-content:center;gap:4px}
+    .dq .chip b{font-size:15px;letter-spacing:.03em;color:var(--blue);font-weight:800}
+    .dq .chip span{font-size:12px;color:#7a7f99}
+    .dq .tab{background:#0b1f7a;border-radius:14px;height:62px;padding:0 10px;display:grid;place-items:center;font-size:15px;font-weight:700;line-height:1.25;text-align:center;color:#fff;box-shadow:0 12px 26px -8px rgba(11,31,122,.75)}
+  </style>
+  <div class="h" data-a>Казахстан: преимущества для роли ИИ-хаба в Евразии</div>
+  <div class="sub" data-a style="--d:1;color:var(--peri2);font-weight:700;letter-spacing:.12em">DIGITAL QAZAQSTAN</div>
+  <div class="dq" style="flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr 1.8fr;gap:16px;margin-top:22px">
+    <div style="display:grid;grid-template-rows:repeat(2,minmax(0,1fr));gap:16px;min-height:0">
+      <div class="f" data-a style="--d:2"><img src="assets/image10.webp" alt=""><b>Доступная энергия для вычислений</b><p>Обеспечение конкурентного и стабильного тарифа для строительства новых ЦОДов</p></div>
+      <div class="f" data-a style="--d:4"><img src="assets/image12.webp" alt=""><b>Молодое цифровое население</b><p>Средний возраст граждан - всего <b class="num-hl"><span data-count="31">31</span> год</b> при исключительно высоком уровне охвата интернетом - <b class="num-hl"><span data-count="92" data-suffix="%">92%</span></b></p></div>
+    </div>
+    <div style="display:grid;grid-template-rows:repeat(2,minmax(0,1fr));gap:16px;min-height:0">
+      <div class="f" data-a style="--d:3"><img src="assets/image9.webp" alt=""><b>eGov мирового уровня</b><p><b class="num-hl"><span data-count="10" data-from="193">10</span>-е место</b> в глобальном рейтинге ООН. Готовый технологический экспортный продукт</p></div>
+      <div class="f" data-a style="--d:5"><img src="assets/image11.webp" alt=""><b>Сильная и взвешенная дипломатия</b><p>Предсказуемая нейтральная площадка, отсутствие вовлеченности в международные конфликты</p></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;min-height:0">
+      <div data-a="zoom" style="--d:3;flex:1;position:relative;overflow:hidden;border-radius:20px" class="gbox">
+        <img src="assets/image8.webp" alt="Земной шар с Казахстаном" style="position:absolute;left:50%;top:92px;width:470px;margin-left:-235px">
+        <div style="position:absolute;top:18px;left:18px;right:18px;display:grid;grid-template-columns:1fr 1.25fr 1fr;gap:16px">
+          <div class="tab">Граждане</div><div class="tab">Экономика и&nbsp;бизнес</div><div class="tab">Госаппарат</div>
+        </div>
+      </div>
+      <div data-a style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;height:66px;--d:6">
+        <div class="chip"><b>БЫСТРЕЕ</b><span>Ускорение процессов</span></div>
+        <div class="chip"><b>ДЕШЕВЛЕ</b><span>Снижение затрат</span></div>
+        <div class="chip"><b>УМНЕЕ</b><span>AI-Driven решения</span></div>
+      </div>
+      <div data-a style="display:grid;grid-template-columns:1fr 1fr;gap:14px;height:66px;--d:7">
+        <div class="chip"><b>РОСТ ЭКОНОМИКИ</b><span>Увеличение масштабов</span></div>
+        <div class="chip"><b>ДОВЕРИЕ</b><span>Прозрачность процессов</span></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 4 · DGSC STRUCTURE -->
+<section class="slide dgsc">
+  <style>
+    .dgsc .blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.75;pointer-events:none}
+    .slide.dgsc.active .blob{animation:float 14s ease-in-out infinite alternate}
+    @keyframes float{to{translate:40px -30px;scale:1.12}}
+    .dgsc .ring{position:absolute;left:640px;top:360px;width:330px;height:330px;margin:-165px 0 0 -165px;border-radius:50%;border:1px dashed rgba(255,255,255,.28)}
+    .dgsc .ring.r2{width:400px;height:400px;margin:-200px 0 0 -200px;border:1px solid rgba(255,255,255,.08)}
+    .slide.dgsc.active .ring{animation:fade .8s forwards,spin 60s linear infinite}
+    .slide.dgsc.active .ring.r2{animation:fade .8s forwards,spin 90s linear infinite reverse}
+    @keyframes spin{to{rotate:360deg}}
+    .dgsc svg.wires{position:absolute;inset:0;width:1280px;height:720px;pointer-events:none}
+    .dgsc .wire{fill:none;stroke-width:2;stroke-dasharray:1;stroke-dashoffset:1;filter:drop-shadow(0 0 4px currentColor)}
+    .slide.dgsc.active .wire{animation:draw .7s var(--ease) forwards;animation-delay:calc(var(--d,0) * 90ms + 500ms)}
+    @keyframes draw{to{stroke-dashoffset:0}}
+    .dgsc .knot{opacity:0}
+    .slide.dgsc.active .knot{animation:fade .3s forwards;animation-delay:calc(var(--d,0) * 90ms + 1100ms)}
+    .glass{background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.06));border:1px solid rgba(255,255,255,.3);
+      backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -1px 0 rgba(255,255,255,.08),0 20px 50px -18px rgba(0,0,20,.6)}
+    .org{position:absolute;width:270px;height:90px;display:flex;border-radius:18px;overflow:hidden;color:#fff}
+    .org .t{flex:1;display:flex;align-items:center;padding:0 18px;font-size:12.5px;font-weight:800;line-height:1.3;letter-spacing:.03em;text-shadow:0 1px 8px rgba(0,0,40,.35)}
+    .org.l .t{justify-content:flex-end;text-align:right}
+    .org i{flex:none;width:80px;margin:8px;border-radius:12px;display:grid;place-items:center;
+      background:linear-gradient(150deg,rgba(110,135,255,.85),rgba(50,75,255,.55));box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 6px 18px -4px rgba(40,70,255,.8)}
+    .org.r i{background:linear-gradient(150deg,rgba(255,110,90,.85),rgba(200,40,30,.6));box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 6px 18px -4px rgba(230,60,40,.8)}
+    .org.hi i{background:linear-gradient(150deg,rgba(170,140,255,.9),rgba(100,90,255,.6))}
+    .org i img{width:40px;height:40px}
+    .dgsc .core{position:absolute;left:640px;top:360px;width:230px;height:230px;margin:-115px 0 0 -115px;border-radius:50%;display:grid;place-items:center}
+    .dgsc .core img{width:168px}
+    .slide.dgsc.active .core{animation:zoom .7s var(--ease) .3s forwards,beat 2.4s ease-in-out 1.6s infinite}
+    .dgsc .core::before,.dgsc .core::after{will-change:transform,opacity}
+    @keyframes beat{0%,100%{scale:1;box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 0 0 0 rgba(130,150,255,0)}18%{scale:1.04;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 70px 10px rgba(130,150,255,.5)}55%{scale:1;box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 0 30px 2px rgba(130,150,255,.2)}}
+    .dgsc .core::before,.dgsc .core::after{content:"";position:absolute;inset:-1px;border-radius:50%;border:2px solid rgba(170,185,255,.8);opacity:0;pointer-events:none}
+    .slide.dgsc.active .core::before{animation:ping 2.4s ease-out 1.6s infinite}
+    .slide.dgsc.active .core::after{animation:ping 2.4s ease-out 2s infinite}
+  </style>
+  <div class="blob" style="left:330px;top:160px;width:360px;height:360px;background:#3b5bff"></div>
+  <div class="blob" style="left:620px;top:220px;width:320px;height:320px;background:#8a4dff;animation-delay:-5s"></div>
+  <div class="blob" style="left:40px;top:420px;width:300px;height:300px;background:#2a7bff;animation-delay:-3s"></div>
+  <div class="blob" style="left:940px;top:40px;width:300px;height:300px;background:#e0443a;opacity:.45;animation-delay:-8s"></div>
+  <div class="blob" style="left:980px;top:440px;width:260px;height:260px;background:#ff6a4d;opacity:.35"></div>
+
+  <div class="ring r2" data-a="fade"></div><div class="ring" data-a="fade"></div>
+  <svg class="wires" viewBox="0 0 1280 720" aria-hidden="true">
+    <g class="flow" stroke="#a9b6ff" color="#8796ff">
+      <path class="wire" pathLength="1" style="--d:1" d="M446 150H557V262"/>
+      <path class="wire" pathLength="1" style="--d:2" d="M386 254H518V276"/>
+      <path class="wire" pathLength="1" style="--d:3" d="M326 360H508"/>
+      <path class="wire" pathLength="1" style="--d:4" d="M386 465H524V444"/>
+      <path class="wire" pathLength="1" style="--d:5" d="M446 570H577V470"/>
+      <path class="wire" pathLength="1" style="--d:6" d="M640 605V492"/>
+    </g>
+    <g class="flow" stroke="#ff9a8a" color="#ff6a55">
+      <path class="wire" pathLength="1" style="--d:1" d="M834 150H723V262"/>
+      <path class="wire" pathLength="1" style="--d:2" d="M893 254H762V276"/>
+      <path class="wire" pathLength="1" style="--d:3" d="M954 360H772"/>
+      <path class="wire" pathLength="1" style="--d:4" d="M893 465H756V444"/>
+      <path class="wire" pathLength="1" style="--d:5" d="M834 570H703V470"/>
+    </g>
+    <g fill="#fff">
+      <circle class="knot" style="--d:1" cx="557" cy="262" r="4"/><circle class="knot" style="--d:2" cx="518" cy="276" r="4"/><circle class="knot" style="--d:3" cx="508" cy="360" r="4"/>
+      <circle class="knot" style="--d:4" cx="524" cy="444" r="4"/><circle class="knot" style="--d:5" cx="577" cy="470" r="4"/><circle class="knot" style="--d:6" cx="640" cy="492" r="4"/>
+      <circle class="knot" style="--d:1" cx="723" cy="262" r="4"/><circle class="knot" style="--d:2" cx="762" cy="276" r="4"/><circle class="knot" style="--d:3" cx="772" cy="360" r="4"/>
+      <circle class="knot" style="--d:4" cx="756" cy="444" r="4"/><circle class="knot" style="--d:5" cx="703" cy="470" r="4"/>
+    </g>
+    <g class="flow in" stroke="#fff" color="#fff">
+      <path class="wire" pathLength="1" style="--d:0" d="M640 100V126"/>
+      <path class="wire" pathLength="1" style="--d:1" d="M640 196V242"/>
+    </g>
+  </svg>
+
+  <img data-a="zoom" src="assets/emblem.webp" alt="Герб Республики Казахстан" style="position:absolute;left:596px;top:8px;width:88px;height:90px;object-fit:contain;filter:drop-shadow(0 0 22px rgba(255,200,80,.4)) drop-shadow(0 10px 20px rgba(0,0,0,.45))">
+  <div class="glass" data-a="zoom" style="--d:1;position:absolute;left:565px;top:128px;width:150px;height:66px;border-radius:16px;display:grid;place-items:center"><img src="assets/image5.webp" alt="AI & Digital Ministry" style="width:118px"></div>
+  <div class="core glass"><img src="assets/dgsc-logo.webp" alt="DGSC"></div>
+
+  <div class="org l glass hi" data-a="left" style="--d:6;left:176px;top:104px"><span class="t">ЦЕНТР ИИ<br>ТРАНСФОРМАЦИИ</span><i><img src="assets/image16.webp" alt=""></i></div>
+  <div class="org l glass" data-a="left" style="--d:7;left:116px;top:209px"><span class="t">ЦЕНТР ЦИФРОВОЙ АРХИТЕКТУРЫ И СТАНДАРТОВ</span><i><img src="assets/image17.webp" alt=""></i></div>
+  <div class="org l glass" data-a="left" style="--d:8;left:56px;top:315px"><span class="t">ЦЕНТР БОЛЬШИХ<br>ДАННЫХ</span><i><img src="assets/image18.webp" alt=""></i></div>
+  <div class="org l glass" data-a="left" style="--d:9;left:116px;top:420px"><span class="t">ЦЕНТР ИСКУССТВЕННОГО ИНТЕЛЛЕКТА</span><i><img src="assets/image19.webp" alt=""></i></div>
+  <div class="org l glass" data-a="left" style="--d:10;left:176px;top:525px"><span class="t">ЦЕНТР<br>ЭКСПЕРТИЗЫ</span><i><img src="assets/image20.webp" alt=""></i></div>
+  <div class="org l glass" data-a style="--d:11;left:505px;top:605px"><span class="t">AI<br>REGION</span><i><img src="assets/image26.webp" alt=""></i></div>
+  <div class="org r glass" data-a style="--d:6;left:834px;top:104px"><i><img src="assets/image21.webp" alt=""></i><span class="t" style="font-size:11.5px">НАЦИОНАЛЬНЫЙ ИНСТИТУТ КИБЕРБЕЗОПАСНОСТИ</span></div>
+  <div class="org r glass" data-a style="--d:7;left:893px;top:209px"><i><img src="assets/image22.webp" alt=""></i><span class="t">INTERNATIONAL<br>RELATIONS</span></div>
+  <div class="org r glass" data-a style="--d:8;left:954px;top:315px"><i><img src="assets/image23.webp" alt=""></i><span class="t">НАЦИОНАЛЬНЫЙ ПРОЕКТНЫЙ ОФИС</span></div>
+  <div class="org r glass" data-a style="--d:9;left:893px;top:420px"><i><img src="assets/image24.webp" alt=""></i><span class="t">AI<br>ACADEMY</span></div>
+  <div class="org r glass" data-a style="--d:10;left:834px;top:525px"><i><img src="assets/image25.webp" alt=""></i><span class="t">МЕДИА<br>ЦЕНТР</span></div>
+</section>
+
+<!-- 5 · НИЧЕГО ЗАРАНЕЕ -->
+<section class="slide"><div class="pad center">
+  <style>
+    .rule{display:flex;gap:16px;align-items:center;font-size:21px;font-weight:600;letter-spacing:.01em}
+    .rule .pill{width:166px;height:50px;border-radius:6px;font-size:20px;font-weight:700;letter-spacing:.02em}
+    .slide.active .rule .pill{animation:breathe 3s ease-in-out 1.2s infinite}
+    @keyframes breathe{50%{filter:brightness(1.12)}}
+  </style>
+  <h2 data-a style="font-size:74px;font-weight:800;line-height:1.12;letter-spacing:.01em">НИЧЕГО ЗАРАНЕЕ<br>ЗНАТЬ НЕ НУЖНО</h2>
+  <div style="display:flex;flex-direction:column;gap:32px;margin-top:62px;align-items:center">
+    <div class="rule" data-a style="--d:3"><span class="pill" style="background:#5068e0;box-shadow:0 0 22px rgba(80,104,224,.65)">МОЖНО</span>ЗАДАВАТЬ ЛЮБЫЕ ВОПРОСЫ</div>
+    <div class="rule" data-a style="--d:5"><span class="pill" style="background:#3c9a76;box-shadow:0 0 22px rgba(60,154,118,.6)">НУЖНО</span>ПОВТОРЯТЬ ДЕЙСТВИЯ ЗА ТРЕНЕРОМ</div>
+  </div>
+</div></section>
+
+<!-- 6 · SECTION -->
+<section class="slide section"><div class="pad center">
+  <div class="orb" data-a="zoom"><video src="assets/orb.mp4" muted loop playsinline preload="none"></video></div>
+  <h2 data-a style="--d:2">ЧТО ТАКОЕ ИИ?</h2>
+</div></section>
+
+<!-- 7 · ЭВОЛЮЦИЯ -->
+<section class="slide"><div class="pad">
+  <style>
+    .tl{position:relative;margin-top:60px;height:380px}
+    .tl .line{position:absolute;left:0;right:0;top:190px;height:2px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.6) 8%,rgba(255,255,255,.6) 92%,transparent)}
+    .tl .pt{position:absolute;width:250px;margin-left:-125px;text-align:center}
+    .tl .dot{position:absolute;left:50%;top:183px;width:16px;height:16px;margin-left:-8px;border-radius:50%;background:var(--bg);border:3px solid #fff;box-shadow:0 0 0 6px rgba(135,150,255,.25)}
+    .tl .y{font-size:30px;font-weight:900}
+    .tl .t{font-size:17px;font-weight:700;margin-top:4px}
+    .tl .d{font-size:13px;color:var(--muted);line-height:1.45;margin-top:8px}
+    .tl .ph{width:220px;height:124px;border-radius:14px;overflow:hidden;margin:0 auto;border:1px solid var(--card-b)}
+    .tl .ph img{width:100%;height:100%;object-fit:cover}
+    .tl .top{position:absolute;bottom:216px;left:0;right:0}
+    .tl .bot{position:absolute;top:216px;left:0;right:0}
+    .slide.active .tl [data-a]{animation-delay:calc(var(--d,0) * 140ms + 600ms)}
+    .slide.active .tl [data-a="drawx"]{animation:drawx 1.4s var(--ease) .5s forwards;transform-origin:left}
+    .slide.active .tl [data-a="pop"]{animation-name:pop;animation-duration:.55s}
+    @keyframes drawx{from{opacity:1;transform:scaleX(0)}to{opacity:1;transform:none}}
+    @keyframes pop{0%{opacity:0;transform:scale(0)}65%{opacity:1;transform:scale(1.6)}100%{opacity:1;transform:none}}
+    .tl .dot.now{background:#fff}
+    .slide.active .tl .dot.now{animation:pop .55s var(--ease) calc(17 * 140ms + 600ms) forwards,ring 2s ease-out calc(17 * 140ms + 1200ms) infinite}
+    @keyframes ring{0%{box-shadow:0 0 0 0 rgba(135,150,255,.7)}100%{box-shadow:0 0 0 16px rgba(135,150,255,0)}}
+  </style>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start">
+    <div class="h" data-a>Эволюция: от шахмат до генерации смыслов</div>
+    <div data-a="fade" style="display:flex;gap:8px;align-items:center;font-size:14px;font-weight:700;line-height:1.1"><img src="assets/image3.webp" alt="" style="width:30px">AI Governance<br><span style="font-weight:500;color:var(--muted)">500</span></div>
+  </div>
+  <div class="card" data-a style="--d:1;margin-top:24px;padding:20px 26px;font-size:17px;line-height:1.5;font-weight:500">Искусственный интеллект (ИИ) - это область компьютерных наук, изучающая создание систем, способных выполнять задачи, которые обычно требуют человеческого интеллекта.</div>
+  <div class="tl">
+    <div class="line" data-a="drawx" style="--d:0"></div>
+    <div class="pt" style="left:16%;top:0;height:100%">
+      <div class="top"><div class="ph" data-a="zoom" style="--d:4"><img src="assets/image27.webp" alt="Каспаров против Deep Blue"></div></div>
+      <div class="dot" data-a="pop" style="--d:2"></div>
+      <div class="bot"><div class="y" data-a style="--d:3">1997</div><div class="t" data-a style="--d:5">Deep Blue</div><div class="d" data-a style="--d:6">Гарри Каспаров уступил компьютеру. Эра «узкого» ИИ, решающего конкретные задачи</div></div>
+    </div>
+    <div class="pt" style="left:39%;top:0;height:100%">
+      <div class="top"><div class="y" data-a style="--d:8">2018</div><div class="t" data-a style="--d:10">Инцидент Uber</div><div class="d" data-a style="--d:11">Беспилотник сбил человека. Осознание рисков и пределов «компьютерного зрения»</div></div>
+      <div class="dot" data-a="pop" style="--d:7"></div>
+      <div class="bot"><div class="ph" data-a="zoom" style="--d:9"><img src="assets/image28.webp" alt="Ночная дорога"></div></div>
+    </div>
+    <div class="pt" style="left:62%;top:0;height:100%">
+      <div class="dot" data-a="pop" style="--d:12"></div>
+      <div class="bot"><div class="y" data-a style="--d:13">2022</div><div class="t" data-a style="--d:15">ChatGPT (GPT-3)</div><div class="d" data-a style="--d:16">Прорыв в обработке естественного языка. ИИ начал «понимать» и генерировать контент</div></div>
+    </div>
+    <div class="pt" style="left:85%;top:0;height:100%">
+      <div class="top"><div class="y" data-a style="--d:18">2026+</div><div class="t" data-a style="--d:20">Industrial AI</div><div class="d" data-a style="--d:21">Интеграция GenAI в производственные процессы и безопасность</div></div>
+      <div class="dot now" data-a="pop" style="--d:17"></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 8 · FIVE-LAYER CAKE -->
+<section class="slide gl"><div class="pad">
+  <style>
+    .cake{position:absolute;left:107px;top:135px;width:360px;height:311px}
+    .cake div{position:absolute;left:50%;translate:-50% 0;height:54px;border:2px solid #0b1f7a;border-radius:10px;display:grid;place-items:center;font-weight:700;font-size:16px;letter-spacing:.02em;color:#0b1f7a;background:#f4f6fc}
+    .cake div.top{background:#0b1f7a;color:#fff}
+    .bub{position:absolute;translate:-50% -50%;background:#0b1f7a;color:#fff;font-weight:800;font-size:16px;line-height:1.25;padding:16px 22px;border-radius:12px;text-align:center;white-space:nowrap;box-shadow:0 14px 30px -8px rgba(11,31,122,.55)}
+    .slide.active .bub{animation:zoom .6s var(--ease) forwards,bob 5s ease-in-out infinite alternate;animation-delay:calc(var(--d) * 90ms + 120ms),calc(var(--d) * 90ms + 800ms)}
+    @keyframes bob{to{translate:-50% calc(-50% - 6px)}}
+  </style>
+  <div class="h" data-a>Что есть ИИ?</div>
+  <div data-a="zoom" style="--d:1;position:absolute;left:61px;top:141px;width:1171px;height:472px;border-radius:22px" class="gbox">
+    <div style="position:absolute;left:107px;top:30px;font-weight:900;font-size:25px;color:#fff;letter-spacing:.01em">AI IS A FIVE-LAYER CAKE</div>
+    <img src="assets/image29.webp" alt="" data-a="zoom" style="--d:8;position:absolute;left:272px;top:72px;height:62px">
+    <div class="cake">
+      <div class="top" data-a style="--d:7;width:164px;top:0">APPLICATIONS</div>
+      <div data-a style="--d:6;width:213px;top:63px">MODELS</div>
+      <div data-a style="--d:5;width:266px;top:126px">INFRASTRUCTURE</div>
+      <div data-a style="--d:4;width:308px;top:191px">CHIPS</div>
+      <div data-a style="--d:3;width:360px;top:256px">ENERGY</div>
+    </div>
+    <div class="bub" data-a style="--d:4;left:733px;top:90px;rotate:-8deg">КАК СДЕЛАТЬ СВОЙ<br>ИИ АГЕНТ?</div>
+    <div class="bub" data-a style="--d:5;left:982px;top:77px;rotate:10deg">ЧТО ТАКОЕ<br>ПРОМТ?</div>
+    <div class="bub" data-a style="--d:6;left:803px;top:191px;rotate:-10deg">ЧЕМ ОТЛИЧАЕТСЯ<br>ЦОД ОТ СЕРВЕРА?</div>
+    <div class="bub" data-a style="--d:7;left:582px;top:265px;rotate:18deg">ЧТО ТАКОЕ<br>ИИ АГЕНТ?</div>
+    <div class="bub" data-a style="--d:8;left:857px;top:300px;rotate:-5deg">КАК АВТОМАТИЗИРОВАТЬ<br>РУТИННУЮ РАБОТУ?</div>
+    <div class="bub" data-a style="--d:9;left:711px;top:410px;rotate:-5deg">ЧТО ТАКОЕ<br>ДАТА ЦЕНТР?</div>
+  </div>
+  <img src="assets/image30.webp" alt="Задумавшийся человек" data-a="fade" style="--d:3;position:absolute;left:836px;top:262px;width:560px;height:560px">
+</div></section>
+
+<!-- 9 · ЗАЧЕМ РУКОВОДИТЕЛЮ -->
+<section class="slide"><div class="pad">
+  <div class="h" data-a>Зачем руководителю ИИ-трансформация</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:22px;margin-top:40px;height:520px">
+    <div class="card center" data-a style="--d:1;padding:30px;font-size:22px;font-weight:700;line-height:1.4"><span style="font-size:15px;color:var(--peri2);margin-bottom:10px">01</span>ИИ меняет не только инструменты, но и структуру работы подразделения</div>
+    <div class="card center" data-a style="--d:2;padding:30px;font-size:22px;font-weight:700;line-height:1.4"><span style="font-size:15px;color:var(--peri2);margin-bottom:10px">02</span>Руководитель определяет скорость и глубину внедрения</div>
+    <div class="card center" data-a style="--d:3;padding:30px;font-size:22px;font-weight:700;line-height:1.4"><span style="font-size:15px;color:var(--peri2);margin-bottom:10px">03</span>Отставание сегодня - это отставание в эффективности завтра</div>
+    <div class="wcard center" data-a style="--d:4;padding:30px;font-size:22px;font-weight:800;line-height:1.4"><span style="font-size:15px;color:var(--blue);margin-bottom:10px">04</span>Задача руководителя - управлять изменением, а не разрабатывать самому</div>
+  </div>
+</div></section>
+
+<!-- 10 · ПЕРЕСОБРАТЬ ПОДРАЗДЕЛЕНИЕ -->
+<section class="slide"><div class="pad">
+  <style>
+    .cmp ul{list-style:none;display:flex;flex-direction:column;gap:30px;margin-top:36px}
+    .cmp li{display:flex;gap:16px;font-size:26px;line-height:1.35;font-weight:500}
+    .cmp li::before{content:"";flex:none;width:11px;height:11px;border-radius:50%;margin-top:13px;background:currentColor;opacity:.6}
+    .cmp h3{font-size:25px;font-weight:800;letter-spacing:.03em}
+  </style>
+  <div class="h" data-a>Как пересобрать подразделение с помощью ИИ</div>
+  <div class="cmp" style="display:grid;grid-template-columns:1fr 70px 1fr;align-items:stretch;margin-top:90px">
+    <div class="card" data-a="left" style="--d:1;padding:40px;color:var(--muted)"><h3 style="color:#fff">ТРАДИЦИОННАЯ СТРУКТУРА</h3>
+      <ul><li>Задачи распределены по людям</li><li>Рутина занимает большую часть времени</li><li>Узкие специалисты на каждую функцию</li></ul></div>
+    <div class="center" data-a="fade" style="--d:2"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+    <div data-a style="--d:3;padding:40px;border-radius:18px;background:linear-gradient(150deg,#2d4bff,#5a3dff);box-shadow:0 30px 70px -20px rgba(60,80,255,.8)"><h3>AI-ПОДРАЗДЕЛЕНИЕ</h3>
+      <ul><li>Задачи распределены между людьми и агентами</li><li>Люди сфокусированы на решениях, не на рутине</li><li>Компактные команды с широкими компетенциями</li></ul></div>
+  </div>
+</div></section>
+
+<!-- 11 · ИИ ИНФРАСТРУКТУРА -->
+<section class="slide infra"><div class="pad">
+  <style>
+    .infra .node{position:absolute;width:290px;height:62px;font-size:18px;background:var(--blue);box-shadow:0 10px 30px rgba(31,61,255,.55)}
+    .infra .dc{position:absolute;left:640px;top:110px;width:540px;height:540px;border-radius:50%;background:#fff;box-shadow:0 40px 100px -20px rgba(0,0,0,.5),0 0 0 14px rgba(255,255,255,.06)}
+    .slide.infra.active .dc{animation:zoom .7s var(--ease) .3s forwards}
+    @keyframes pingsm{0%{transform:scale(1);opacity:0}12%{opacity:.7}100%{transform:scale(1.28);opacity:0}}
+    .infra .link{fill:none;stroke:rgba(255,255,255,.4);stroke-width:1.5;stroke-dasharray:1;stroke-dashoffset:1}
+    .slide.infra.active .link{animation:draw .8s var(--ease) forwards;animation-delay:calc(var(--d) * 90ms + 700ms)}
+  </style>
+  <div class="h" data-a>ИИ инфраструктура</div>
+  <svg class="wires" viewBox="0 0 1280 720" style="position:absolute;left:0;top:0;width:1280px;height:720px;pointer-events:none" aria-hidden="true">
+    <g color="#8796ff">
+      <path class="link" pathLength="1" style="--d:1" d="M420 250 C560 250 600 300 700 330"/>
+      <path class="link" pathLength="1" style="--d:2" d="M400 380 H700"/>
+      <path class="link" pathLength="1" style="--d:3" d="M440 510 C580 510 610 450 700 430"/>
+    </g>
+  </svg>
+  <div class="pill node" data-a="left" style="--d:1;--hd:0s;left:130px;top:219px">МИКРОЧИПЫ</div>
+  <div class="pill node" data-a="left" style="--d:2;--hd:-.1s;left:110px;top:349px">СЕРВЕР</div>
+  <div class="pill node" data-a="left" style="--d:3;--hd:0s;left:150px;top:479px">СУПЕРКОМПЬЮТЕР</div>
+  <div class="dc" data-a="zoom">
+    <img src="assets/image31.webp" alt="Схема датацентра" style="position:absolute;inset:40px 40px 90px;width:460px;height:410px;object-fit:contain">
+    <div style="position:absolute;bottom:56px;left:0;right:0;text-align:center;color:var(--navy-ink);font-weight:900;font-size:22px;line-height:1.1">ДАТАЦЕНТР<br><span style="font-weight:600;font-size:16px;color:#5a6390">(ЦОД)</span></div>
+  </div>
+</div></section>
+
+<!-- 12 · ALEM.CLOUD -->
+<section class="slide"><div class="pad">
+  <div class="h" data-a>Суперкомпьютер ALEM.CLOUD</div>
+  <div class="sub" data-a style="--d:1">Национальная вычислительная инфраструктура для ИИ</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(2,minmax(0,1fr));gap:18px;margin-top:28px;height:520px">
+    <img data-a="zoom" style="--d:2;width:100%;height:100%;object-fit:cover;border-radius:16px" src="assets/image32.webp" alt="Серверный зал ALEM.CLOUD">
+    <img data-a="zoom" style="--d:3;width:100%;height:100%;object-fit:cover;border-radius:16px" src="assets/image33.webp" alt="Делегация в серверном зале">
+    <img data-a="zoom" style="--d:4;width:100%;height:100%;object-fit:cover;border-radius:16px" src="assets/image35.webp" alt="Стойки суперкомпьютера">
+    <img data-a="zoom" style="--d:5;width:100%;height:100%;object-fit:cover;border-radius:16px;background:#000" src="assets/image34.webp" alt="Вычислительный модуль">
+  </div>
+</div></section>
+
+<!-- 13 · SECTION -->
+<section class="slide section"><div class="pad center">
+  <div class="orb" data-a="zoom"><video src="assets/orb.mp4" muted loop playsinline preload="none"></video></div>
+  <h2 data-a style="--d:2">ЧТО ТАКОЕ VIBE CODING?</h2>
+</div></section>
+
+<!-- 14 · КАРПАТЫЙ -->
+<section class="slide gl"><div class="pad">
+  <style>
+    .vs{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:16px 18px}
+    .vs div{border-radius:10px;padding:12px 18px;font-size:16px;font-weight:700;line-height:1.3;display:flex;align-items:center}
+    .vs .a{background:var(--peri);}
+    .vs .b{border:1px solid rgba(255,255,255,.35);font-weight:600;color:var(--muted)}
+  </style>
+  <div class="h" data-a>Что такое vibe coding?</div>
+  <div style="display:grid;grid-template-columns:350px 1fr;gap:28px;margin-top:34px;height:500px">
+    <div data-a="left" style="--d:1;position:relative;border-radius:20px;overflow:hidden">
+      <img src="assets/image36.webp" alt="Андрей Карпатый" style="width:100%;height:100%;object-fit:cover">
+      <div style="position:absolute;left:0;right:0;bottom:0;padding:40px 20px 20px;background:linear-gradient(transparent,rgba(31,61,255,.95));font-weight:800;font-size:18px;text-align:center">Андрей Карпатый</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+        <div class="wcard" data-a style="--d:2;display:flex;align-items:center;gap:18px;padding:0 24px;height:86px"><img class="inv" src="assets/image37.webp" alt="OpenAI" style="height:38px"><span style="border-left:1px solid #ccd;padding-left:16px;font-size:16px;color:#3a4270;font-weight:500;line-height:1.3">один из<br>сооснователей</span></div>
+        <div class="wcard" data-a style="--d:3;display:flex;align-items:center;gap:18px;padding:0 24px;height:86px"><img src="assets/image38.webp" alt="Tesla" style="height:52px"><span style="border-left:1px solid #ccd;padding-left:16px;font-size:16px;color:#3a4270;font-weight:500;line-height:1.3">ex-директор<br>по ИИ</span></div>
+      </div>
+      <div class="card" data-a style="--d:4;flex:1;padding:28px 28px;display:flex;flex-direction:column">
+        <div style="font-weight:800;font-size:23px;line-height:1.3;margin-bottom:22px">Главные отличия от классического<br>программирования</div>
+        <div class="vs">
+          <div class="a">УЧИШЬ СИНТАКСИС<br>ЯЗЫКА ГОДАМИ</div><div class="b">ОБЩАЕШЬСЯ<br>НА РОДНОМ ЯЗЫКЕ</div>
+          <div class="a">ИЩЕШЬ ПРОПУЩЕННУЮ<br>ЗАПЯТУЮ 2 ЧАСА</div><div class="b">ГОВОРИШЬ ИИ:<br>«НЕ РАБОТАЕТ, ИСПРАВЬ»</div>
+          <div class="a">ГЛАВНЫЙ НАВЫК<br>ЗНАНИЕ КОДА</div><div class="b">ГЛАВНЫЙ НАВЫК<br>ПОНИМАНИЕ ЛОГИКИ ПРОДУКТА</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 15 · ≠ -->
+<section class="slide"><div class="pad">
+  <style>
+    .neq .pill{height:112px;border-radius:10px;font-size:37px;font-weight:600;letter-spacing:.01em;background:#0a2fd6;box-shadow:0 10px 40px rgba(20,60,255,.55)}
+  </style>
+  <div class="h" data-a>Что такое vibe coding?</div>
+  <div class="neq" style="position:absolute;left:50px;right:57px;top:304px;display:grid;grid-template-columns:391px 1fr 575px;align-items:center">
+    <div class="pill" data-a="left" style="--d:1">VIBE CODING</div>
+    <div data-a="zoom" style="--d:3;text-align:center;font-size:96px;font-weight:800;line-height:1">≠</div>
+    <div class="pill" data-a style="--d:2">ПРОГРАММИРОВАНИЕ</div>
+  </div>
+</div></section>
+
+<!-- 16 · КЛАССИКА VS VIBE -->
+<section class="slide"><div class="pad">
+  <style>
+    .apps{display:flex;flex-direction:column;gap:30px;justify-content:center;height:100%;padding-left:34px}
+    .apps div{display:flex;gap:24px;align-items:center;font-weight:800;font-size:20px;line-height:1.15}
+    .apps img{width:108px;height:108px;object-fit:contain}
+    .orbit{position:absolute;left:50%;top:50%;width:0;height:0}
+    .slide.active .orbit{animation:spin 48s linear infinite}
+    .orbit .ic{position:absolute;left:-52px;top:-52px;width:104px;height:104px;transform:rotate(var(--a)) translateX(178px) rotate(calc(-1 * var(--a)))}
+    .orbit .ic img{width:100%;height:100%;object-fit:cover;border-radius:22px;box-shadow:0 14px 30px -8px rgba(0,0,0,.5)}
+    .slide.active .orbit .ic img{animation:spin 48s linear infinite reverse}
+    .vorb{position:absolute;left:50%;top:50%;width:296px;height:296px;margin:-148px 0 0 -148px;z-index:2}
+    @keyframes spin{to{rotate:360deg}}
+  </style>
+  <div class="h" data-a>Классическая работа vs vibe coding</div>
+  <div data-a="left" style="--d:1;position:absolute;left:49px;top:150px;width:300px;height:471px;border-radius:14px"><div class="apps">
+    <div><img src="assets/image47.webp" alt="">Power<br>Point</div>
+    <div><img src="assets/image46.webp" alt="">Word</div>
+    <div><img src="assets/image45.webp" alt="">Excel</div>
+  </div></div>
+  <svg data-a="fade" style="--d:2;position:absolute;left:387px;top:345px" width="122" height="80" viewBox="0 0 122 80"><path fill="#fff" d="M0 24h70V0l52 40-52 40V56H0z"/></svg>
+  <div data-a="zoom" style="--d:3;position:absolute;left:546px;top:150px;width:677px;height:471px;border-radius:14px;overflow:visible">
+    <div class="orbit"><div class="ic" style="--a:-150deg"><img src="assets/image40.webp" alt="ChatGPT"></div><div class="ic" style="--a:-90deg"><img src="assets/image39.webp" alt="Claude"></div><div class="ic" style="--a:-30deg"><img src="assets/lovable.webp" alt="Lovable"></div><div class="ic" style="--a:30deg"><img src="assets/gemini.webp" alt="Gemini"></div><div class="ic" style="--a:90deg"><img src="assets/image42.webp" alt=""></div><div class="ic" style="--a:150deg"><img src="assets/image43.webp" alt="Suno"></div></div>
+    <div class="orb vorb"><video src="assets/orb.mp4" muted loop playsinline preload="none"></video>
+      <div class="center" style="position:absolute;inset:0;font-size:31px;font-weight:800;text-shadow:0 2px 14px rgba(40,20,140,.6)">Vibe Coding</div></div>
+  </div>
+</div></section>
+
+<!-- 17 · SECTION -->
+<section class="slide section"><div class="pad center">
+  <div class="orb" data-a="zoom"><video src="assets/orb.mp4" muted loop playsinline preload="none"></video></div>
+  <h2 data-a style="--d:2">ЧТО ТАКОЕ PROMPT?</h2>
+</div></section>
+
+<!-- 18 · PROMPT -->
+<section class="slide gl"><div class="pad">
+  <style>
+    .pf{position:absolute;left:45px;display:flex;gap:18px;align-items:flex-start}
+    .pf .tile{display:flex;flex-direction:column;align-items:center;gap:14px;font-size:15px;font-weight:700;width:113px}
+    .pf .tile i{width:113px;height:113px;border-radius:12px;background:#fff;display:grid;place-items:center}
+    .pf .tile img{width:54px;height:54px}
+    .pf .res{width:392px;height:113px;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:30px;font-size:29px;font-weight:700;
+      background:linear-gradient(90deg,#5b45c8,#5c78e8);box-shadow:0 18px 40px -14px rgba(100,90,255,.8)}
+    .pf .res img{width:50px;filter:brightness(0) invert(1)}
+    .slab{position:absolute;left:45px;right:57px;border-radius:22px;background:#45568f;display:flex;flex-direction:column;justify-content:center;padding:0 44px;font-size:25px;line-height:1.38;font-weight:500}
+    .slab b{font-weight:800}
+  </style>
+  <div class="h" data-a>Что такое prompt?</div>
+  <div class="slab" data-a style="--d:1;top:128px;height:329px">
+    <p><b>Промпт -</b> это текстовый запрос, который пользователь отправляет модели ИИ (например, ChatGPT), чтобы получить ответ. Это единичное сообщение, команда, вопрос или инструкция.</p>
+    <p style="margin-top:32px"><b>Например:</b><br>«Напиши резюме на английском»</p>
+  </div>
+  <div class="pf" style="top:487px">
+    <div data-a class="gbox" style="--d:2;width:241px;height:113px;border-radius:12px;display:grid;place-items:center;font-size:27px;font-weight:800">Промпт</div>
+    <div class="tile" data-a style="--d:3"><i><img src="assets/image48.webp" alt=""></i>Цель</div>
+    <div class="tile" data-a style="--d:4"><i><img src="assets/image49.webp" alt=""></i>Контекст</div>
+    <div class="tile" data-a style="--d:5"><i><img src="assets/image52.webp" alt=""></i>Параметры</div>
+    <div class="tile" data-a style="--d:6"><i><img src="assets/image50.webp" alt=""></i>Формат</div>
+    <div class="res" data-a style="--d:7"><img src="assets/image51.webp" alt="">Результаты</div>
+  </div>
+</div></section>
+
+<!-- 19 · PROMPT ENGINEERING -->
+<section class="slide gl"><div class="pad">
+  <style>
+    .pf19{position:absolute;left:45px;display:flex;gap:18px;align-items:flex-start}
+    .pf19 .tile{display:flex;flex-direction:column;align-items:center;gap:14px;font-size:15px;font-weight:700;width:113px}
+    .pf19 .tile i{width:113px;height:113px;border-radius:12px;background:#fff;display:grid;place-items:center}
+    .pf19 .tile img{width:54px;height:54px}
+    .pf19 .res{width:392px;height:113px;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:30px;font-size:29px;font-weight:700;
+      background:linear-gradient(90deg,#5b45c8,#5c78e8);box-shadow:0 18px 40px -14px rgba(100,90,255,.8)}
+    .pf19 .res img{width:50px;filter:brightness(0) invert(1)}
+    .slab19{position:absolute;left:45px;right:57px;border-radius:22px;background:#45568f;display:flex;flex-direction:column;justify-content:center;padding:0 44px;font-size:25px;line-height:1.38;font-weight:500}
+    .slab19 b{font-weight:800}
+  </style>
+  <div class="h" data-a>Что такое prompt engineering?</div>
+  <div class="slab19" data-a style="--d:1;top:127px;height:276px;font-size:28px">
+    <p><b>Промпт-инжиниринг -</b> это системный метод разработки, оптимизации и структурирования промптов для получения наилучшего, надежного и повторяемого результата от ИИ.</p>
+  </div>
+  <div data-a style="--d:2;position:absolute;left:45px;top:426px;font-size:29px;font-weight:600;letter-spacing:.01em">КАК НАПИСАТЬ ХОРОШИЙ ПРОМПТ</div>
+  <div class="pf19" style="top:484px">
+    <div class="tile" data-a style="--d:3"><i><img src="assets/image55.webp" alt=""></i>Роль</div>
+    <div class="tile" data-a style="--d:4"><i><img src="assets/image49.webp" alt=""></i>Контекст</div>
+    <div class="tile" data-a style="--d:5"><i><img src="assets/image48.webp" alt=""></i>Задача</div>
+    <div class="tile" data-a style="--d:6"><i><img src="assets/image54.webp" alt=""></i>Ограничения</div>
+    <div class="tile" data-a style="--d:7"><i><img src="assets/image50.webp" alt=""></i>Формат</div>
+    <div class="tile" data-a style="--d:8"><i><img src="assets/image53.webp" alt=""></i>Цель</div>
+    <div class="res" data-a style="--d:9;margin-left:-1px"><img src="assets/image51.webp" alt="">Результаты</div>
+  </div>
+  <img src="assets/image56.webp" alt="" data-a="fade" style="--d:6;position:absolute;left:1082px;top:258px;height:262px">
+</div></section>
+
+<!-- 20 · 3 ШАГА -->
+<section class="slide"><div class="pad">
+  <style>
+    .step{display:flex;gap:26px;align-items:center}
+    .step .n{width:92px;height:92px;border-radius:18px;background:linear-gradient(150deg,#6a7bff,#3a50ff);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:40px;font-weight:900;line-height:1;box-shadow:0 14px 34px -10px rgba(60,80,255,.9)}
+    .step .n small{font-size:12px;font-weight:600;opacity:.85;margin-top:4px}
+    .step p{font-size:24px;line-height:1.35;font-weight:500;color:var(--muted)}
+    .step p b{color:#fff;font-weight:700}
+  </style>
+  <div class="h" data-a>3 шага для старта</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:40px;height:500px;align-items:center">
+    <div>
+      <div data-a="left" style="--d:1;font-size:52px;font-weight:900;line-height:1.1">НЕ НУЖНО СТАНОВИТЬСЯ ПРОГРАММИСТОМ</div>
+      <div data-a="left" style="--d:2;font-size:28px;font-weight:500;color:var(--muted);margin-top:26px;line-height:1.35">нужно уметь объяснить задачу и проверить результат</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:34px">
+      <div class="step" data-a style="--d:3"><div class="n">1<small>шаг</small></div><p><b>Выберите</b><br>простую задачу</p></div>
+      <div class="step" data-a style="--d:4"><div class="n">2<small>шаг</small></div><p><b>Объясните</b><br>её своими словами</p></div>
+      <div class="step" data-a style="--d:5"><div class="n">3<small>шаг</small></div><p><b>Проверьте</b><br>и улучшите черновик</p></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 21 · ПИРАМИДА -->
+<section class="slide"><div class="pad">
+  <style>
+    .pyr{position:absolute;left:400px;top:150px;display:flex;flex-direction:column;gap:0;white-space:nowrap}
+    .pyr div{height:65px;display:flex;flex-direction:column;justify-content:center}
+    .pyr b{font-size:19px;font-weight:800}
+    .pyr span{font-size:14px;color:var(--muted);margin-top:3px}
+  </style>
+  <div class="h" data-a>Пирамида промпт-инжиниринга</div>
+  <img src="assets/image57.webp" alt="" data-a="zoom" style="--d:1;position:absolute;left:60px;top:150px;width:520px">
+  <div class="pyr">
+    <div data-a style="--d:2;padding-left:40px"><b>Пример</b><span>дайте ИИ пример того, как должен выглядеть идеальный ответ</span></div>
+    <div data-a style="--d:3;padding-left:70px"><b>Формат вывода</b><span>таблица, код, маркированный список, JSON, PDF</span></div>
+    <div data-a style="--d:4;padding-left:100px"><b>Ограничения</b><span>«без воды», «не более 100 слов», «без вступления»</span></div>
+    <div data-a style="--d:5;padding-left:130px"><b>Цепочка мыслей / Контекст</b><span>«Думай шаг за шагом», «Сначала составь план, потом пиши»</span></div>
+    <div data-a style="--d:6;padding-left:160px"><b>Задача</b><span>«Напиши», «Проанализируй», «Сравни», «Составь»</span></div>
+    <div data-a style="--d:7;padding-left:190px"><b>Контекст</b><span>вводные данные, целевая аудитория, цель документа, предыстория проблемы</span></div>
+    <div data-a style="--d:8;padding-left:220px"><b>Роль</b><span>«Ты - бизнес-аналитик», «Ты - старший редактор», «Ты - Python-разработчик»</span></div>
+  </div>
+</div></section>
+
+<!-- 22 · СКОРО -->
+<section class="slide"><div class="pad">
+  <style>
+    .sc{position:absolute;width:243px;height:234px;object-fit:cover;border-radius:14px;box-shadow:0 24px 50px -10px rgba(0,0,0,.6)}
+  </style>
+  <div data-a style="position:absolute;left:25px;top:40px;display:flex;gap:26px;align-items:center">
+    <span class="pill" style="background:#f2482c;width:149px;height:55px;border-radius:8px;font-size:23px;font-weight:700;box-shadow:0 0 26px rgba(242,72,44,.6)">СКОРО:</span>
+    <span style="font-size:20px;font-weight:500;line-height:1.3">Анонс по обучению VibeCoding<br>для физических лиц</span>
+  </div>
+  <img src="assets/image58c.webp" alt="" class="sc" data-a="zoom" style="--d:2;left:245px;top:365px;rotate:15deg"><img src="assets/image59c.webp" alt="" class="sc" data-a="zoom" style="--d:3;left:226px;top:156px;rotate:-15deg"><img src="assets/image60c.webp" alt="" class="sc" data-a="zoom" style="--d:4;left:800px;top:349px;rotate:50.5deg"><img src="assets/image61c.webp" alt="" class="sc" data-a="zoom" style="--d:5;left:775px;top:171px;rotate:30deg">
+  <img src="assets/image62c.webp" alt="QR-код Instagram @DGSC.KZ" data-a="zoom" style="--d:6;position:absolute;left:449px;top:168px;width:382px;height:380px;border-radius:26px;box-shadow:0 30px 70px rgba(0,0,0,.55)">
+  <div data-a style="--d:7;position:absolute;left:0;right:0;top:572px;text-align:center;font-size:33px;font-weight:800;line-height:1.2">Больше об ИИ<br>в Instagram ЦПЦП</div>
+</div></section>
+
+<!-- 23 · OSINT -->
+<section class="slide gl"><div class="badge"><img src="assets/image63.webp" alt="">Внешний контур</div><div class="pad" style="padding-top:56px">
+  <style>
+    .src{position:relative;border-radius:10px;padding:14px 26px 12px 16px;display:flex;flex-direction:column;gap:6px;min-height:0;overflow:hidden}
+    .src::after{content:"";position:absolute;right:9px;top:50%;width:5px;height:54px;margin-top:-27px;border-radius:3px;background:#1d43f5}
+    .src b{font-size:16.5px;color:#1d3bf0;line-height:1.2;font-weight:700}
+    .src span{font-size:14.5px;line-height:1.28}
+    .prin li{list-style:none;font-size:19px;line-height:1.3;padding-left:30px;position:relative;margin-top:16px}
+    .prin li:first-child{margin-top:0}
+    .prin li::before{content:"";position:absolute;left:0;top:8px;width:15px;height:15px;border-radius:50%;background:#fff}
+  </style>
+  <div class="h" data-a style="font-size:22px">OSINT-анализ | Open Source Intelligence</div>
+  <div data-a style="--d:1;font-size:17px;font-weight:600;line-height:1.3;margin-top:28px">Систематический сбор, проверка и анализ информации из открытых<br>и публично доступных источников без получения доступа к закрытым системам.</div>
+  <div class="gbox gblue" data-a="left" style="--d:2;position:absolute;left:59px;top:211px;width:390px;height:427px;border-radius:20px;padding:30px 30px 26px;display:flex;flex-direction:column;justify-content:space-between">
+    <div style="font-size:40px;font-weight:800;line-height:1.12">СУТЬ И<br>ПРИНЦИПЫ</div>
+    <ul class="prin" style="margin-top:0">
+      <li><b>Легальность:</b> Работа исключительно с открытыми данными</li>
+      <li><b>Системность:</b> Анализ, сопоставление и верификация связей.</li>
+      <li><b>Законность:</b> Использование только законных и доступных источников.</li>
+    </ul>
+  </div>
+  <div data-a style="--d:2;position:absolute;left:469px;top:174px;font-weight:800;font-size:21px">Ключевые источники информации <span style="font-weight:400">| <span data-count="9">9</span> категорий</span></div>
+  <div style="position:absolute;left:469px;top:211px;width:750px;height:427px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,minmax(0,1fr));gap:16px"><div class="src" data-a style="--d:3"><b>Веб-сайты<br>и Поисковики</b><span>Индексы Google, Yandex, веб-архивы и доменные записи</span></div><div class="src" data-a style="--d:3"><b>Социальные<br>сети</b><span>Публичные профили, связи, посты, фото и активности</span></div><div class="src" data-a style="--d:3"><b>СМИ<br>и Пресса</b><span>Новостные ресурсы, статьи, публикации и интервью</span></div><div class="src" data-a style="--d:4"><b>Реестры<br>и Базы</b><span>Госреестры юридических лиц, коммерческие базы</span></div><div class="src" data-a style="--d:4"><b>Открытые<br>документы</b><span>Судебные решения, отчеты, тендерная документация</span></div><div class="src" data-a style="--d:4"><b>Карты<br>и Геоданные</b><span>Спутниковые снимки, панорамы и геолокации</span></div><div class="src" data-a style="--d:5"><b>Форумы<br>и Сообщества</b><span>Публичные обсуждения, тематические чаты и группы</span></div><div class="src" data-a style="--d:5"><b>Контакты</b><span>Опубликованные Email, телефоны, мессенджеры</span></div><div class="src" data-a style="--d:5"><b>Метаданные<br>и Техданные</b><span>EXIF файлов, WHOIS, IP-адреса, заголовки</span></div></div>
+</div></section>
+
+<!-- 24 · SECTION -->
+<section class="slide section"><div class="pad center">
+  <div class="orb" data-a="zoom"><video src="assets/orb.mp4" muted loop playsinline preload="none"></video></div>
+  <h2 data-a style="--d:2">ChatGPT VS Claude?</h2>
+</div></section>
+
+<!-- 25 · ЧТО ТАКОЕ CHATGPT -->
+<section class="slide gl"><div class="badge"><img src="assets/image63.webp" alt="">Внешний контур</div><div class="pad" style="padding-top:56px">
+  <div class="h" data-a style="font-size:22px">Что такое ChatGPT?</div>
+  <div class="wcard" data-a style="--d:1;position:absolute;left:58px;top:141px;width:793px;height:338px;border-radius:10px;padding:46px 34px">
+    <img src="assets/chatgpt-white.webp" alt="ChatGPT" style="height:64px">
+    <p style="font-size:24px;line-height:1.38;margin-top:32px;font-weight:500">это умный бот для общения, созданный компанией OpenAI. Он понимает обычный человеческий язык и умеет отвечать на вопросы, писать тексты, переводить слова и помогать в учебе или работе</p>
+  </div>
+  <div data-a class="gbox" style="--d:3;position:absolute;left:58px;top:508px;width:388px;height:105px;border-radius:10px;padding:0 16px;display:flex;align-items:center;font-size:18px;line-height:1.35"><span><b>1 миллиард –</b> ежемесячно<br>активных пользователей<br>по данным</span></div>
+  <div data-a class="gbox" style="--d:4;position:absolute;left:464px;top:508px;width:387px;height:105px;border-radius:10px;padding:0 16px;display:flex;align-items:center;font-size:18px;line-height:1.35"><span><b><span data-count="70" data-suffix="%">70%</span> диалогов</b> – личные<br>и бытовые задачи</span></div>
+  <div data-a="zoom" style="--d:2;position:absolute;left:873px;top:141px;width:353px;height:193px;border-radius:10px;overflow:hidden">
+    <img src="assets/image64.webp" alt="Сэм Альтман и Илон Маск" style="width:100%;height:100%;object-fit:cover">
+    <div style="position:absolute;inset:auto 0 0 0;height:80px;background:linear-gradient(transparent,rgba(70,100,255,.95))"></div>
+    <div style="position:absolute;left:46px;bottom:16px;font-weight:800;font-size:22px;line-height:1.1">Сэм<br>Альтман</div>
+    <div style="position:absolute;left:236px;bottom:28px;font-weight:800;font-size:22px;line-height:1.1">Илон<br>Маск</div>
+  </div>
+  <div class="wcard center" data-a="zoom" style="--d:3;position:absolute;left:873px;top:361px;width:353px;height:252px;border-radius:10px"><img class="inv" src="assets/image37.webp" alt="OpenAI" style="width:258px"></div>
+  <div class="gpt-chip" data-a="fade" style="--d:8"><img src="assets/chatgpt-white.webp" alt="ChatGPT"></div>
+</div></section>
+
+<!-- 26 · CHAT WORK CODEX IMAGES -->
+<section class="slide g26"><div class="badge"><img src="assets/image63.webp" alt="">Внешний контур</div>
+  <style>
+    .g26 .panel{position:absolute;left:90px;top:110px;width:1100px;height:540px;border-radius:30px}
+    .g26 .hub{position:absolute;left:150px;top:300px;width:370px;height:160px;display:grid;place-items:center}
+    .g26 .hub::before{content:"";position:absolute;inset:-60px -40px;border-radius:50%;background:radial-gradient(closest-side,rgba(16,163,127,.45),transparent);filter:blur(10px)}
+    .slide.g26.active .hub::before{animation:breathe26 3s ease-in-out infinite}
+    @keyframes breathe26{50%{opacity:.55;scale:1.08}}
+    .g26 .hub img{position:relative;width:340px}
+    .g26 .ln{fill:none;stroke:rgba(255,255,255,.45);stroke-width:2;stroke-dasharray:1;stroke-dashoffset:1}
+    .slide.g26.active .ln{animation:draw .8s var(--ease) forwards;animation-delay:calc(var(--d) * 120ms + 600ms)}
+    .g26 .knot26{fill:#fff;opacity:0}
+    .slide.g26.active .knot26{animation:fade .3s forwards;animation-delay:calc(var(--d) * 120ms + 1300ms)}
+    .g26 .it{position:absolute;left:720px;width:400px;height:90px;border-radius:18px;display:flex;align-items:center;gap:22px;padding:0 18px}
+    .g26 .it i{width:58px;height:58px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(150deg,#19c39a,#0e8f6f);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 8px 20px -6px rgba(16,163,127,.8)}
+    .g26 .it svg{width:30px;height:30px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .g26 .it span{font-size:38px;font-weight:800}
+    .g26 .it span.soft{font-weight:500;color:var(--muted)}
+    .g26 .glass{background:linear-gradient(135deg,rgba(255,255,255,.18),rgba(255,255,255,.05));border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 20px 50px -18px rgba(0,0,20,.6)}
+  </style>
+  <svg class="wires" viewBox="0 0 1280 720" style="position:absolute;inset:0;width:1280px;height:720px;pointer-events:none" aria-hidden="true">
+    <g class="flow in" color="#19c39a"><path class="ln" pathLength="1" style="--d:0" d="M520 380 C630 380 610 209 720 209"/><path class="ln" pathLength="1" style="--d:1" d="M520 380 C630 380 610 323 720 323"/><path class="ln" pathLength="1" style="--d:2" d="M520 380 C630 380 610 437 720 437"/><path class="ln" pathLength="1" style="--d:3" d="M520 380 C630 380 610 551 720 551"/></g>
+    <circle class="knot26" style="--d:0" cx="720" cy="209" r="5"/><circle class="knot26" style="--d:1" cx="720" cy="323" r="5"/><circle class="knot26" style="--d:2" cx="720" cy="437" r="5"/><circle class="knot26" style="--d:3" cx="720" cy="551" r="5"/>
+  </svg>
+  <div class="hub" data-a="zoom" style="--d:2"><img src="assets/chatgpt-white.webp" alt="ChatGPT"></div>
+  <div class="it glass" data-a="left" style="--d:8;top:164px"><i><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg></i><span>Chat</span></div><div class="it glass" data-a="left" style="--d:9;top:278px"><i><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/></svg></i><span>Work</span></div><div class="it glass" data-a="left" style="--d:10;top:392px"><i><svg viewBox="0 0 24 24"><path d="M8 6l-6 6 6 6M16 6l6 6-6 6M14 4l-4 16"/></svg></i><span>Codex</span></div><div class="it glass" data-a="left" style="--d:11;top:506px"><i><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 17l-5-5-9 8"/></svg></i><span class="soft">Images</span></div>
+</section>
+
+<!-- 27 · МОДЕЛИ CHATGPT -->
+<section class="slide gl"><div class="badge"><img src="assets/image63.webp" alt="">Внешний контур</div><div class="pad" style="padding-top:56px">
+  <style>
+    .mdl{position:absolute;top:215px;height:364px;border-radius:8px;padding:28px 28px 30px;display:flex;flex-direction:column}
+    .mdl.m1{background:#0b1f7a;border:2px solid #1d43f5}
+    .mdl.m2{background:#0a2bbf}
+    .mdl.m3{background:#0a34d6}
+    .mdl.m4{background:#0b48ff;box-shadow:0 20px 50px -10px rgba(20,70,255,.8)}
+    .mdl .tier{font-size:12.5px;font-weight:700;letter-spacing:.03em}
+    .mdl h4{font-size:26px;font-weight:700;margin-top:26px}
+    .mdl hr{border:0;height:3px;width:46px;background:#fff;margin:30px 0 22px}
+    .mdl .role{font-size:18.5px;font-weight:700}
+    .mdl.m2 .role{font-size:16px}
+    .mdl p{font-size:15px;line-height:1.3;margin-top:22px;color:rgba(255,255,255,.88)}
+    .mdl .mode{margin-top:auto;font-size:12.5px;font-weight:700}
+  </style>
+  <div class="h" data-a style="font-size:22px">Модели ChatGPT</div>
+  <div class="sub" data-a style="--d:1;font-size:19.5px;color:#fff;font-weight:500;margin-top:26px;padding-left:7px">Слева направо – от быстрой и дешёвой к самой умной и мощной.</div>
+  <div data-a="fade" style="--d:2;position:absolute;left:69px;right:63px;top:160px;display:flex;justify-content:space-between;font-size:16px;font-weight:700;padding:0 8px 10px;border-bottom:3px solid;border-image:linear-gradient(90deg,rgba(255,255,255,.05),rgba(255,255,255,.6) 30%,#fff) 1">
+    <span>Скорость</span><span>Максимум возможностей</span></div>
+  <div class="mdl m1" data-a style="--d:3;left:69px;width:273.5px"><div class="tier">FREE / GO</div><h4>GPT‑5.6 Luna</h4><hr><div class="role">Быстрые ответы</div><p>Повседневные вопросы, короткие правки и простые задачи</p><div class="mode">Instant, Think</div></div><div class="mdl m2" data-a style="--d:4;left:360.5px;width:273.5px"><div class="tier">WORK / CODEX</div><h4>GPT‑5.6 Terra</h4><hr><div class="role">Баланс цены и качества</div><p>Отчёты, анализ документов и обычная работа с кодом</p><div class="mode">Не выбирается в стандартном чате</div></div><div class="mdl m3" data-a style="--d:5;left:652px;width:273.5px"><div class="tier">PAID</div><h4>GPT‑5.6 Sol</h4><hr><div class="role">Основная модель</div><p>Код, исследования, дизайн и сложная профессиональная работа</p><div class="mode">Instant, Medium, High, Extra High</div></div><div class="mdl m4" data-a style="--d:6;left:943.5px;width:273.5px"><div class="tier">PRO / BUSINESS / ENTERPRISE</div><h4>GPT‑6 Astra</h4><hr><div class="role">Максимум точности</div><p>Для самых сложных и длительных работ</p><div class="mode">GPT‑6</div></div>
+  <div data-a style="--d:7;position:absolute;left:0;right:0;top:600px;text-align:center;font-size:18px">Luna для скорости, Sol для большинства серьёзных задач, Pro для максимальной точности и автономности</div>
+  <div class="gpt-chip" data-a="fade" style="--d:8"><img src="assets/chatgpt-white.webp" alt="ChatGPT"></div>
+</div></section>
+
+<!-- 28 · SECTION -->
+<section class="slide section"><div class="badge"><img src="assets/image63.webp" alt="">Внешний контур</div><div class="pad center">
+  <div class="orb" data-a="zoom"><video src="assets/orb.mp4" muted loop playsinline preload="none"></video></div>
+  <h2 data-a style="--d:2">Секреты использования<br>ChatGPT</h2>
+</div></section>
+
+<!-- 29–35 · SECRETS (generated in JS) -->
+<template id="secret-tpl"><section class="slide secret"><div class="badge"><img src="assets/image63.webp" alt="">Внешний контур</div><div class="pad center">
+  <div class="num" data-a="zoom"></div><h2 data-a style="--d:2"></h2><div class="dots" data-a="fade" style="--d:3"></div>
+</div></section></template>
+<div id="secrets-anchor" hidden></div>
+
+<!-- 36 · МОЖНО / НЕЛЬЗЯ -->
+<section class="slide gl"><div class="badge"><img src="assets/image63.webp" alt="">Внешний контур</div><div class="pad" style="padding-top:56px">
+  <style>
+    .mn{position:absolute;top:177px;width:526px;height:249px;border-radius:16px;padding:30px 40px}
+    .mn h3{font-size:25px;font-weight:800;letter-spacing:.03em}
+    .mn ul{list-style:none;margin-top:14px;display:flex;flex-direction:column;gap:2px}
+    .mn li{font-size:18px;line-height:1.25}
+    .mn li::before{content:"- "}
+    .alg{position:absolute;left:155px;top:522px;display:flex;align-items:center}
+    .alg .s{width:187px;height:82px;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:17px;text-align:center;line-height:1.2}
+    .alg .s img{height:28px}
+    .alg .arr{width:76px;flex:none}
+  </style>
+  <div class="h" data-a style="font-size:22px">ChatGPT помогает: решение и проверка – за специалистом</div>
+  <div class="mn gbox ggreen" data-a="left" style="--d:1;left:73px"><h3>МОЖНО</h3><ul>
+    <li>Готовить проекты писем, справок и презентаций</li><li>Анализировать открытые источники</li><li>Составлять планы, чек-листы и варианты решений</li><li>Редактировать обезличенные тексты</li></ul></div>
+  <div class="mn gbox gred" data-a style="--d:2;left:686px"><h3>НЕЛЬЗЯ</h3><ul>
+    <li>Загружать персональные данные граждан</li><li>Делиться служебной тайной и документами ограниченного доступа</li><li>Отправлять материалы проверок и расследований</li><li>Отправлять внутреннюю переписку без разрешения</li></ul></div>
+  <div data-a style="--d:3;position:absolute;left:0;right:0;top:474px;text-align:center;font-weight:800;font-size:22px;letter-spacing:.02em">АЛГОРИТМ БЕЗОПАСНОЙ РАБОТЫ</div>
+  <div class="alg" data-a style="--d:4">
+    <div class="s gbox">Документ</div><svg class="arr" width="66" height="16" viewBox="0 0 66 16"><path d="M0 8h60M53 2l8 6-8 6" stroke="#fff" stroke-width="2" fill="none"/></svg>
+    <div class="s gbox"><img src="assets/chatgpt-white.webp" alt="ChatGPT"></div><svg class="arr" width="66" height="16" viewBox="0 0 66 16"><path d="M0 8h60M53 2l8 6-8 6" stroke="#fff" stroke-width="2" fill="none"/></svg>
+    <div class="s gbox">Проверка<br>специалистом</div><svg class="arr" width="66" height="16" viewBox="0 0 66 16"><path d="M0 8h60M53 2l8 6-8 6" stroke="#fff" stroke-width="2" fill="none"/></svg>
+    <div class="s gbox">Итоговый<br>документ</div>
+  </div>
+  <div data-a style="--d:5;position:absolute;left:254px;top:658px;width:775px;height:62px;border-radius:12px 12px 0 0;display:grid;place-items:center;text-align:center;font-weight:700;font-size:18px;line-height:1.3;background:linear-gradient(150deg,rgba(40,80,255,.85),rgba(30,60,240,.55));border:1px solid rgba(255,255,255,.3);border-bottom:0;backdrop-filter:blur(14px);box-shadow:0 0 30px rgba(31,61,255,.6)">Ответственность за содержание, законность и решения всегда остается<br>за государственным служащим</div>
+</div></section>
+
+<!-- 37 · БЕЗОПАСНАЯ РАБОТА -->
+<section class="slide gl"><div class="pad">
+  <style>
+    .err{flex:1;border-radius:16px;padding:16px 24px;display:flex;gap:20px;align-items:center;font-size:17px;line-height:1.4;font-weight:500}
+    .err i{flex:none;width:40px;height:40px;border-radius:12px;background:linear-gradient(150deg,#7a8bff,#4f62f0);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 6px 16px -4px rgba(80,100,255,.8);color:#fff;font-style:normal;font-weight:800;display:grid;place-items:center}
+  </style>
+  <div class="h" data-a>Безопасная работа с ИИ: что нельзя загружать</div>
+  <div class="sub" data-a style="--d:1">Если материал раскрывает человека, операцию или служебные процессы - работайте только в закрытом контуре</div>
+  <div data-a style="--d:2;font-weight:800;font-size:15px;letter-spacing:.06em;color:var(--peri2);margin-top:28px">ПРИМЕРЫ ОШИБОК ИЗ ПРАКТИЧЕСКОЙ ДЕЯТЕЛЬНОСТИ</div>
+  <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:22px;margin-top:16px;height:472px">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="err gbox" data-a="left" style="--d:3"><i>1</i>Ориентировки, рапорты, служебные сводки и иные материалы, содержащие данные оперативной работы</div>
+      <div class="err gbox" data-a="left" style="--d:4"><i>2</i>Фото и видео происшествий, если видны лица, номера автомобилей, адреса или другие идентификаторы</div>
+      <div class="err gbox" data-a="left" style="--d:5"><i>3</i>Материалы производств и обращения граждан с персональными данными, показаниями или приложениями</div>
+      <div class="err gbox" data-a="left" style="--d:6"><i>4</i>Карты патрулирования, планы ОПМ, внутренние отчеты и анализ уязвимостей объектов</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div class="gbox" data-a style="--d:4;border-radius:16px;padding:28px 30px;flex:1">
+        <div style="font-weight:900;font-size:20px;color:#b9c4ff;line-height:1.25">ПРОВЕРЬТЕ ДАННЫЕ ПЕРЕД ЗАГРУЗКОЙ В ИИ</div>
+        <ul style="list-style:none;margin-top:16px;display:flex;flex-direction:column;gap:12px;font-size:17px;line-height:1.35">
+          <li>• персональные данные</li><li>• сведения о реагировании или расследовании</li><li>• внутренние маршруты, системы или переписка</li></ul>
+      </div>
+      <div class="gbox gblue" data-a style="--d:5;border-radius:16px;padding:28px 30px;flex:1">
+        <div style="font-weight:800;font-size:20px">Правило для сотрудника</div>
+        <p style="margin-top:12px;font-size:17px;line-height:1.5">Если есть сомнение в режиме доступа - не загружайте материал в открытый контур. Уточните порядок работы</p>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 38 · CLOSING -->
+<section class="slide cover">
+  <div class="logos" data-a="fade">
+    <div class="mvd"><img src="assets/image6.webp" alt="Герб МВД"><span>Қазақстан Республикасы Ішкі істер министрлігі</span></div>
+    <img src="assets/image5.webp" alt="AI & Digital Ministry">
+    <img class="dgsc" src="assets/image4.webp" alt="DGSC AI Academy">
+  </div>
+  <div class="orb" data-a="zoom"><video src="assets/orb.mp4" muted loop playsinline preload="none"></video></div>
+  <div class="center" style="position:absolute;inset:0;top:-60px"><h1 data-a style="--d:2;font-size:64px">ЖЕЛАЕМ ПРОДУКТИВНОЙ<br>РАБОТЫ</h1></div>
+  <img class="star" src="assets/image3.webp" alt="" data-a="zoom" style="--d:4">
+</section>
+
+</div></div>
+
+<div id="progress"></div>
+<div id="hud">
+  <button id="prev" aria-label="Предыдущий слайд"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <span id="count">1 / 38</span>
+  <button id="next" aria-label="Следующий слайд"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+  <button id="fs" aria-label="Во весь экран"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+</div>
+
+<script>
+(() => {
+  // секреты 29–35
+  const secrets = ['Новый чат','Свой ИИ агент = Проекты','Плагины','Skills = навыки','Артефакты = архив','Токены','Написание промптов'];
+  const tpl = document.getElementById('secret-tpl'), anchor = document.getElementById('secrets-anchor');
+  secrets.forEach((t, i) => {
+    const s = tpl.content.firstElementChild.cloneNode(true);
+    s.querySelector('.num').textContent = i + 1;
+    s.querySelector('h2').textContent = t;
+    s.querySelector('.dots').innerHTML = secrets.map((_, k) => `<i class="${k <= i ? 'on' : ''}"></i>`).join('');
+    anchor.before(s);
+  });
+
+
+  // импульсы по линиям схемы DGSC: из центра к подразделениям, сверху - в центр
+  document.querySelectorAll('.wires g.flow').forEach(g => {
+    const into = g.classList.contains('in');
+    g.querySelectorAll('.wire, .link, .ln').forEach(w => {
+      const p = w.cloneNode();
+      p.setAttribute('class', into ? 'pulse in' : 'pulse');
+      p.setAttribute('stroke', '#fff');
+      p.style.setProperty('--pd', into ? '1.6s' : '2s');
+      g.appendChild(p);
+    });
+  });
+
+  const deck = document.getElementById('deck');
+  const slides = [...deck.querySelectorAll('.slide')];
+  const N = slides.length;
+  let cur = 0;
+
+  function fit() {
+    const s = Math.min(innerWidth / 1280, innerHeight / 720);
+    deck.style.transform = `translate(-50%, -50%) scale(${s})`;
+  }
+  addEventListener('resize', fit); fit();
+
+  function go(i, push = true) {
+    i = Math.max(0, Math.min(N - 1, i));
+    if (i === cur && slides[i].classList.contains('active')) return;
+    slides[cur].classList.remove('active');
+    slides[cur].querySelectorAll('video').forEach(v => v.pause());
+    cur = i;
+    const s = slides[cur];
+    s.classList.add('active');
+    s.querySelectorAll('video').forEach(v => { v.currentTime = 0; v.play().catch(() => {}); });
+    runCounters(s);
+    // заранее подгружаем видео на соседних слайдах
+    [slides[cur + 1], slides[cur - 1]].forEach(n => n && n.querySelectorAll('video').forEach(v => v.preload = 'auto'));
+    document.getElementById('count').textContent = `${cur + 1} / ${N}`;
+    document.getElementById('progress').style.width = `${(cur + 1) / N * 100}%`;
+    if (push) history.replaceState(null, '', '#' + (cur + 1));
+  }
+
+  // числа плавно набегают от data-from (по умолчанию 0) до data-count
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fmt = (el, v) => el.dataset.fmt === 'bn'
+    ? (v >= 1000 ? '1 млрд' : `${Math.round(v)} млн`)
+    : Math.round(v) + (el.dataset.suffix || '');
+  function runCounters(slide) {
+    slide.querySelectorAll('[data-count]').forEach(el => {
+      const to = +el.dataset.count, from = +(el.dataset.from || 0);
+      cancelAnimationFrame(el._raf);
+      if (reduce) { el.textContent = fmt(el, to); return; }
+      el.textContent = fmt(el, from);
+      const t0 = performance.now() + 450, dur = 1500;
+      const step = now => {
+        const k = Math.min(1, Math.max(0, (now - t0) / dur));
+        el.textContent = fmt(el, from + (to - from) * (1 - Math.pow(1 - k, 3)));
+        if (k < 1) el._raf = requestAnimationFrame(step);
+      };
+      el._raf = requestAnimationFrame(step);
+    });
+  }
+
+  const next = () => go(cur + 1), prev = () => go(cur - 1);
+  addEventListener('keydown', e => {
+    if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); next(); }
+    else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); prev(); }
+    else if (e.key === 'Home') go(0);
+    else if (e.key === 'End') go(N - 1);
+    else if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') toggleFs();
+  });
+  document.getElementById('next').onclick = next;
+  document.getElementById('prev').onclick = prev;
+  const toggleFs = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.();
+  document.getElementById('fs').onclick = toggleFs;
+
+  // клик по левой/правой половине экрана
+  document.getElementById('viewport').addEventListener('click', e => {
+    (e.clientX < innerWidth / 3 ? prev : next)();
+  });
+
+  // свайпы
+  let tx = null, ty = null;
+  addEventListener('touchstart', e => { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, { passive: true });
+  addEventListener('touchend', e => {
+    if (tx === null) return;
+    const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) (dx < 0 ? next : prev)();
+    tx = null;
+  });
+
+  // показываем панель при движении мыши
+  let t; addEventListener('mousemove', () => { document.body.classList.add('mouse'); clearTimeout(t); t = setTimeout(() => document.body.classList.remove('mouse'), 1800); });
+
+  addEventListener('hashchange', () => {
+    const n = parseInt(location.hash.slice(1), 10);
+    if (Number.isFinite(n) && n - 1 !== cur) go(n - 1, false);
+  });
+
+  const start = parseInt(location.hash.slice(1), 10);
+  slides[0].classList.remove('active');
+  cur = 0;
+  go(Number.isFinite(start) ? start - 1 : 0, false);
+})();
+</script>
+</body>
+</html>
