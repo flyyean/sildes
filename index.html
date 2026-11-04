@@ -911,6 +911,7 @@ body{background:#050e4a}
 
   // импульсы по линиям схемы DGSC: из центра к подразделениям, сверху - в центр
   document.querySelectorAll('.wires g.flow').forEach(g => {
+    if (g.closest('.dgsc')) return; // на схеме DGSC линии статичные: стрелки выходят один раз
     const into = g.classList.contains('in');
     g.querySelectorAll('.wire, .link, .ln').forEach(w => {
       const p = w.cloneNode();
