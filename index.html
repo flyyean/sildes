@@ -114,6 +114,7 @@ body{background:#050e4a}
 .slide.gl .gred{background:linear-gradient(150deg,rgba(255,95,60,.85),rgba(225,55,30,.55))!important;border-color:rgba(255,170,150,.4)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 20px 50px -18px rgba(242,72,44,.7)!important}
 .slide.gl .wcard span,.slide.gl .wcard p{color:rgba(255,255,255,.88)!important;border-color:rgba(255,255,255,.3)!important}
 .slide.gl .f>b{color:#fff}
+.slide.gl .f>img{filter:brightness(0) invert(1)}
 .slide.gl .f p{color:rgba(255,255,255,.72)}
 .slide.gl .num-hl{color:#b9c4ff}
 .slide.gl .chip b{color:#fff}
@@ -231,11 +232,16 @@ body{background:#050e4a}
     .dgsc svg.wires{position:absolute;inset:0;width:1280px;height:720px;pointer-events:none}
     .dgsc .wire{fill:none;stroke-width:2;stroke-dasharray:1;stroke-dashoffset:1;filter:drop-shadow(0 0 4px currentColor)}
     .slide.dgsc.active .wire{animation:draw .7s var(--ease) forwards;animation-delay:calc(var(--d,0) * 90ms + 2.3s)}
+    .dgsc .flow:not(.in) .wire{stroke-dashoffset:-1}
+    .slide.dgsc.active .flow:not(.in) .wire{animation-name:drawout}
+    @keyframes drawout{from{stroke-dashoffset:-1}to{stroke-dashoffset:0}}
+    .dgsc .head4{opacity:0}
+    .slide.dgsc.active .head4{animation:fade .25s forwards;animation-delay:calc(var(--d) * 90ms + 2.95s)}
     .slide.dgsc.active .flow.in .wire{animation-duration:.45s;animation-delay:.6s}
     .slide.dgsc.active .flow.in .wire + .wire{animation-delay:1.3s}
     .slide.dgsc.active .s4-emb{animation-delay:.15s}
     .slide.dgsc.active .s4-min{animation-delay:.95s}
-    .slide.dgsc.active .org{animation-delay:calc((var(--d) - 6) * 110ms + 2.7s)}
+    .slide.dgsc.active .org{animation-delay:calc((var(--d) - 6) * 90ms + 2.95s)}
     @keyframes draw{to{stroke-dashoffset:0}}
     .dgsc .knot{opacity:0}
     .slide.dgsc.active .knot{animation:fade .3s forwards;animation-delay:calc(var(--d,0) * 90ms + 2.9s)}
@@ -292,6 +298,7 @@ body{background:#050e4a}
       <path class="wire" pathLength="1" style="--d:0" d="M640 100V126"/>
       <path class="wire" pathLength="1" style="--d:1" d="M640 196V242"/>
     </g>
+      <g><path class="head4" fill="#a9b6ff" style="--d:1" d="M446 150 L459 143 L459 157 Z"/><path class="head4" fill="#a9b6ff" style="--d:2" d="M386 254 L399 247 L399 261 Z"/><path class="head4" fill="#a9b6ff" style="--d:3" d="M326 360 L339 353 L339 367 Z"/><path class="head4" fill="#a9b6ff" style="--d:4" d="M386 465 L399 458 L399 472 Z"/><path class="head4" fill="#a9b6ff" style="--d:5" d="M446 570 L459 563 L459 577 Z"/><path class="head4" fill="#a9b6ff" style="--d:6" d="M640 605 L633 592 L647 592 Z"/><path class="head4" fill="#ff9a8a" style="--d:1" d="M834 150 L821 143 L821 157 Z"/><path class="head4" fill="#ff9a8a" style="--d:2" d="M893 254 L880 247 L880 261 Z"/><path class="head4" fill="#ff9a8a" style="--d:3" d="M954 360 L941 353 L941 367 Z"/><path class="head4" fill="#ff9a8a" style="--d:4" d="M893 465 L880 458 L880 472 Z"/><path class="head4" fill="#ff9a8a" style="--d:5" d="M834 570 L821 563 L821 577 Z"/></g>
   </svg>
 
   <img class="s4-emb" data-a="zoom" src="assets/emblem.webp" alt="Герб Республики Казахстан" style="position:absolute;left:596px;top:8px;width:88px;height:90px;object-fit:contain;filter:drop-shadow(0 0 22px rgba(255,200,80,.4)) drop-shadow(0 10px 20px rgba(0,0,0,.45))">
