@@ -225,15 +225,20 @@ body{background:#050e4a}
     @keyframes float{to{translate:40px -30px;scale:1.12}}
     .dgsc .ring{position:absolute;left:640px;top:360px;width:330px;height:330px;margin:-165px 0 0 -165px;border-radius:50%;border:1px dashed rgba(255,255,255,.28)}
     .dgsc .ring.r2{width:400px;height:400px;margin:-200px 0 0 -200px;border:1px solid rgba(255,255,255,.08)}
-    .slide.dgsc.active .ring{animation:fade .8s forwards,spin 60s linear infinite}
-    .slide.dgsc.active .ring.r2{animation:fade .8s forwards,spin 90s linear infinite reverse}
+    .slide.dgsc.active .ring{animation:fade .8s 1.7s both,spin 60s linear infinite}
+    .slide.dgsc.active .ring.r2{animation:fade .8s 1.7s both,spin 90s linear infinite reverse}
     @keyframes spin{to{rotate:360deg}}
     .dgsc svg.wires{position:absolute;inset:0;width:1280px;height:720px;pointer-events:none}
     .dgsc .wire{fill:none;stroke-width:2;stroke-dasharray:1;stroke-dashoffset:1;filter:drop-shadow(0 0 4px currentColor)}
-    .slide.dgsc.active .wire{animation:draw .7s var(--ease) forwards;animation-delay:calc(var(--d,0) * 90ms + 500ms)}
+    .slide.dgsc.active .wire{animation:draw .7s var(--ease) forwards;animation-delay:calc(var(--d,0) * 90ms + 2.3s)}
+    .slide.dgsc.active .flow.in .wire{animation-duration:.45s;animation-delay:.6s}
+    .slide.dgsc.active .flow.in .wire + .wire{animation-delay:1.3s}
+    .slide.dgsc.active .s4-emb{animation-delay:.15s}
+    .slide.dgsc.active .s4-min{animation-delay:.95s}
+    .slide.dgsc.active .org{animation-delay:calc((var(--d) - 6) * 110ms + 2.7s)}
     @keyframes draw{to{stroke-dashoffset:0}}
     .dgsc .knot{opacity:0}
-    .slide.dgsc.active .knot{animation:fade .3s forwards;animation-delay:calc(var(--d,0) * 90ms + 1100ms)}
+    .slide.dgsc.active .knot{animation:fade .3s forwards;animation-delay:calc(var(--d,0) * 90ms + 2.9s)}
     .glass{background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.06));border:1px solid rgba(255,255,255,.3);
       backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);
       box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -1px 0 rgba(255,255,255,.08),0 20px 50px -18px rgba(0,0,20,.6)}
@@ -247,12 +252,12 @@ body{background:#050e4a}
     .org i img{width:40px;height:40px}
     .dgsc .core{position:absolute;left:640px;top:360px;width:230px;height:230px;margin:-115px 0 0 -115px;border-radius:50%;display:grid;place-items:center}
     .dgsc .core img{width:168px}
-    .slide.dgsc.active .core{animation:zoom .7s var(--ease) .3s forwards,beat 2.4s ease-in-out 1.6s infinite}
+    .slide.dgsc.active .core{animation:zoom .7s var(--ease) 1.65s both,beat 2.4s ease-in-out 4s infinite}
     .dgsc .core::before,.dgsc .core::after{will-change:transform,opacity}
     @keyframes beat{0%,100%{scale:1;box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 0 0 0 rgba(130,150,255,0)}18%{scale:1.04;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 70px 10px rgba(130,150,255,.5)}55%{scale:1;box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 0 30px 2px rgba(130,150,255,.2)}}
     .dgsc .core::before,.dgsc .core::after{content:"";position:absolute;inset:-1px;border-radius:50%;border:2px solid rgba(170,185,255,.8);opacity:0;pointer-events:none}
-    .slide.dgsc.active .core::before{animation:ping 2.4s ease-out 1.6s infinite}
-    .slide.dgsc.active .core::after{animation:ping 2.4s ease-out 2s infinite}
+    .slide.dgsc.active .core::before{animation:ping 2.4s ease-out 4s infinite}
+    .slide.dgsc.active .core::after{animation:ping 2.4s ease-out 4.4s infinite}
   </style>
   <div class="blob" style="left:330px;top:160px;width:360px;height:360px;background:#3b5bff"></div>
   <div class="blob" style="left:620px;top:220px;width:320px;height:320px;background:#8a4dff;animation-delay:-5s"></div>
@@ -289,8 +294,8 @@ body{background:#050e4a}
     </g>
   </svg>
 
-  <img data-a="zoom" src="assets/emblem.webp" alt="Герб Республики Казахстан" style="position:absolute;left:596px;top:8px;width:88px;height:90px;object-fit:contain;filter:drop-shadow(0 0 22px rgba(255,200,80,.4)) drop-shadow(0 10px 20px rgba(0,0,0,.45))">
-  <div class="glass" data-a="zoom" style="--d:1;position:absolute;left:565px;top:128px;width:150px;height:66px;border-radius:16px;display:grid;place-items:center"><img src="assets/image5.webp" alt="AI & Digital Ministry" style="width:118px"></div>
+  <img class="s4-emb" data-a="zoom" src="assets/emblem.webp" alt="Герб Республики Казахстан" style="position:absolute;left:596px;top:8px;width:88px;height:90px;object-fit:contain;filter:drop-shadow(0 0 22px rgba(255,200,80,.4)) drop-shadow(0 10px 20px rgba(0,0,0,.45))">
+  <div class="glass s4-min" data-a="zoom" style="--d:1;position:absolute;left:565px;top:128px;width:150px;height:66px;border-radius:16px;display:grid;place-items:center"><img src="assets/image5.webp" alt="AI & Digital Ministry" style="width:118px"></div>
   <div class="core glass"><img src="assets/dgsc-logo.webp" alt="DGSC"></div>
 
   <div class="org l glass hi" data-a="left" style="--d:6;left:176px;top:104px"><span class="t">ЦЕНТР ИИ<br>ТРАНСФОРМАЦИИ</span><i><img src="assets/image16.webp" alt=""></i></div>
@@ -442,7 +447,7 @@ body{background:#050e4a}
 <section class="slide infra3"><div class="pad">
   <style>
     .infra3 .pic{position:absolute;left:56px;top:222px;width:520px;filter:drop-shadow(0 24px 40px rgba(0,20,120,.55))}
-    .slide.infra3.active .pic{animation:zoom .8s var(--ease) .2s forwards,float3 6s ease-in-out 1.2s infinite alternate}
+    .slide.infra3.active .pic{animation:zoom .8s var(--ease) .2s both,float3 6s ease-in-out 1.2s infinite alternate}
     @keyframes float3{to{translate:0 -8px}}
     .infra3 .wire3{fill:none;stroke:#a9b6ff;stroke-width:2.5;stroke-dasharray:1;stroke-dashoffset:1;filter:drop-shadow(0 0 4px #8796ff)}
     .slide.infra3.active .wire3{animation:draw .8s var(--ease) forwards;animation-delay:var(--t)}
@@ -904,7 +909,7 @@ body{background:#050e4a}
       const p = w.cloneNode();
       p.setAttribute('class', into ? 'pulse in' : 'pulse');
       p.setAttribute('stroke', '#fff');
-      p.style.setProperty('--pd', into ? '1.6s' : '2s');
+      p.style.setProperty('--pd', g.closest('.dgsc') ? (into ? '3.6s' : '4s') : (into ? '1.6s' : '2s'));
       g.appendChild(p);
     });
   });
