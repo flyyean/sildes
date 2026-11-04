@@ -439,38 +439,37 @@ body{background:#050e4a}
 </div></section>
 
 <!-- 11 · ИИ ИНФРАСТРУКТУРА -->
-<section class="slide infra2"><div class="pad">
+<section class="slide infra3"><div class="pad">
   <style>
-    .infra2 .disc{position:absolute;left:492px;top:244px;width:296px;height:296px;border-radius:50%;display:grid;place-items:center;
-      background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.26);
-      backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 30px 70px -20px rgba(0,0,30,.7)}
-    .infra2 .disc img{width:246px;filter:drop-shadow(0 16px 26px rgba(0,20,120,.55))}
-    .slide.infra2.active .disc{animation:zoom .8s var(--ease) .2s forwards,float2 6s ease-in-out 1.2s infinite alternate}
-    @keyframes float2{to{translate:0 -8px}}
-    .infra2 .arc{fill:none;stroke-width:15;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1}
-    .infra2 .tip{fill:none;stroke-width:15;stroke-linecap:round;stroke-linejoin:round;opacity:0}
-    .slide.infra2.active .arc{animation:draw 1.1s cubic-bezier(.6,0,.25,1) forwards;animation-delay:var(--t)}
-    .slide.infra2.active .tip{animation:tippop .45s var(--ease) forwards;animation-delay:var(--t)}
-    @keyframes tippop{from{opacity:0;transform:translateX(var(--dx))}to{opacity:1;transform:none}}
-    .infra2 .lbl{position:absolute;top:366px;font-size:35px;font-weight:800;letter-spacing:.01em;line-height:52px;opacity:0}
-    .slide.infra2.active .lbl{animation:var(--k) .7s var(--ease) forwards;animation-delay:var(--t)}
-    @keyframes inl{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
-    @keyframes inr{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:none}}
-    .infra2 .glowA{filter:drop-shadow(0 0 10px rgba(80,110,255,.8))}
-    .infra2 .glowB{filter:drop-shadow(0 0 10px rgba(150,100,255,.8))}
+    .infra3 .pic{position:absolute;left:70px;top:196px;width:600px;filter:drop-shadow(0 24px 40px rgba(0,20,120,.55))}
+    .slide.infra3.active .pic{animation:zoom .8s var(--ease) .2s forwards,float3 6s ease-in-out 1.2s infinite alternate}
+    @keyframes float3{to{translate:0 -8px}}
+    .infra3 .wire3{fill:none;stroke:#a9b6ff;stroke-width:2.5;stroke-dasharray:1;stroke-dashoffset:1;filter:drop-shadow(0 0 4px #8796ff)}
+    .slide.infra3.active .wire3{animation:draw .8s var(--ease) forwards;animation-delay:var(--t)}
+    .infra3 .head{fill:#a9b6ff;opacity:0}
+    .infra3 .knot3{fill:#fff;opacity:0}
+    .slide.infra3.active :is(.head,.knot3){animation:fade .3s forwards;animation-delay:var(--t)}
+    .infra3 .node3{position:absolute;left:830px;width:390px;height:118px;border-radius:20px;display:flex;align-items:center;gap:24px;padding:0 14px;color:#fff;
+      background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.06));border:1px solid rgba(255,255,255,.3);
+      backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 20px 50px -18px rgba(0,0,20,.6)}
+    .infra3 .node3 i{flex:none;width:90px;height:90px;border-radius:16px;display:grid;place-items:center;
+      background:linear-gradient(150deg,rgba(110,135,255,.9),rgba(50,75,255,.6));box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 8px 22px -6px rgba(40,70,255,.85)}
+    .infra3 .node3.v i{background:linear-gradient(150deg,rgba(170,140,255,.9),rgba(110,80,255,.6));box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 8px 22px -6px rgba(120,80,255,.85)}
+    .infra3 .node3 svg{width:46px;height:46px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .infra3 .node3 span{font-size:30px;font-weight:800;letter-spacing:.02em}
   </style>
   <div class="h" data-a>ИИ инфраструктура</div>
+  <img class="pic" src="assets/datacenter.webp" alt="Датацентр">
   <svg viewBox="0 0 1280 720" style="position:absolute;inset:0;width:1280px;height:720px;pointer-events:none" aria-hidden="true">
-    <defs>
-      <linearGradient id="gA" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#7b8fff"/><stop offset="1" stop-color="#3d5bff"/></linearGradient>
-      <linearGradient id="gB" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b58cff"/><stop offset="1" stop-color="#7a4dff"/></linearGradient>
-    </defs>
-    <g class="glowA"><path class="arc" pathLength="1" stroke="url(#gA)" style="--t:.8s" d="M808.7 460.2 A182 182 0 1 0 458.0 392.0 L412.0 392.0"/><path class="tip" stroke="#3d5bff" style="--t:1.8s;--dx:16px" d="M432.0 368.0 L404.0 392.0 L432.0 416.0"/></g>
-    <g class="glowB"><path class="arc" pathLength="1" stroke="url(#gB)" style="--t:1.5s" d="M471.3 323.8 A182 182 0 1 0 822.0 392.0 L868.0 392.0"/><path class="tip" stroke="#7a4dff" style="--t:2.5s;--dx:-16px" d="M848.0 368.0 L876.0 392.0 L848.0 416.0"/></g>
+    <circle class="knot3" style="--t:1s" cx="690" cy="396" r="6"/>
+    <path class="wire3" pathLength="1" style="--t:1s" d="M690 396 H750 V292 H812"/>
+    <path class="wire3" pathLength="1" style="--t:1.2s" d="M690 396 H750 V500 H812"/>
+    <path class="head" style="--t:1.7s" d="M812 284 L826 292 L812 300 Z"/>
+    <path class="head" style="--t:1.9s" d="M812 492 L826 500 L812 508 Z"/>
   </svg>
-  <div class="disc"><img src="assets/datacenter.webp" alt="Датацентр"></div>
-  <div class="lbl" style="right:888px;text-align:right;--t:1.95s;--k:inl">Серверы</div>
-  <div class="lbl" style="left:888px;--t:2.65s;--k:inr">Суперкомпьютер</div>
+  <div class="node3" data-a="left" style="--d:16;top:233px"><i><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="7" rx="2"/><rect x="3" y="14" width="18" height="7" rx="2"/><path d="M7 6.5h.01M7 17.5h.01M11 6.5h6M11 17.5h6"/></svg></i><span>Серверы</span></div>
+  <div class="node3 v" data-a="left" style="--d:18;top:441px"><i><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg></i><span>Суперкомпьютер</span></div>
 </div></section>
 
 <!-- 12 · ALEM.CLOUD -->
