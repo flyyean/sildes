@@ -226,7 +226,8 @@ body{background:#050e4a}
     </div>
     <div style="display:flex;flex-direction:column;gap:14px;min-height:0">
       <div data-a="zoom" style="--d:3;flex:1;position:relative;overflow:hidden;border-radius:20px" class="gbox">
-        <img src="assets/image8.webp" alt="Земной шар с Казахстаном" style="position:absolute;left:50%;top:92px;width:470px;margin-left:-235px">
+        <img id="globeFallback" src="assets/image8.webp" alt="Земной шар с Казахстаном" style="position:absolute;left:50%;top:92px;width:470px;margin-left:-235px">
+        <div id="kzGlobe" aria-hidden="true" style="position:absolute;left:50%;top:84px;width:480px;height:480px;margin-left:-240px;pointer-events:none;opacity:0;transition:opacity 1s"></div>
         <div style="position:absolute;top:18px;left:18px;right:18px;display:grid;grid-template-columns:1fr 1.25fr 1fr;gap:16px">
           <div class="tab">Граждане</div><div class="tab">Экономика и&nbsp;бизнес</div><div class="tab">Госаппарат</div>
         </div>
@@ -1078,6 +1079,62 @@ body{background:#050e4a}
   slides[0].classList.remove('active');
   cur = 0;
   go(Number.isFinite(start) ? start - 1 : 0, false);
+})();
+</script>
+<script>
+// слайд 3: живой 3D‑глобус (globe.gl / three-globe, MIT). Мир - точками, Казахстан - яркими точками.
+// Библиотека грузится после показа страницы; если WebGL недоступен, остаётся картинка.
+(() => {
+  const box = document.getElementById('kzGlobe'); if (!box) return;
+  const slide = box.closest('.slide');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const ASTANA = { lat: 51.17, lng: 71.43 };
+  let globe = null, loading = false;
+
+  const load = src => new Promise((ok, fail) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = fail; document.head.appendChild(s); });
+
+  function build() {
+    const kz = f => f.properties.iso === 'KZ';
+    globe = Globe({ animateIn: false, rendererConfig: { antialias: true, alpha: true } })(box)
+      .width(480).height(480)
+      .backgroundColor('rgba(0,0,0,0)')
+      .showAtmosphere(true).atmosphereColor('#7f93ff').atmosphereAltitude(0.17)
+      .hexPolygonsData(window.WORLD_COUNTRIES.features)
+      .hexPolygonUseDots(true)
+      .hexPolygonResolution(f => kz(f) ? 4 : 3)
+      .hexPolygonMargin(f => kz(f) ? 0.38 : 0.45)
+      .hexPolygonAltitude(f => kz(f) ? 0.012 : 0.004)
+      .hexPolygonColor(f => kz(f) ? '#ffffff' : 'rgba(140,158,255,.55)')
+      .ringsData([ASTANA]).ringColor(() => t => `rgba(255,255,255,${1 - t})`)
+      .ringMaxRadius(6).ringPropagationSpeed(2.2).ringRepeatPeriod(1600)
+      .pointsData([ASTANA]).pointColor(() => '#ffffff').pointAltitude(0.02).pointRadius(0.55);
+    const m = globe.globeMaterial();
+    m.color.set('#0c1d86'); m.emissive.set('#0a1670'); m.emissiveIntensity = 0.55; m.shininess = 0.4;
+    globe.pointOfView({ lat: 38, lng: 92, altitude: 1.95 }, 0); // Казахстан выезжает слева в центр
+    const c = globe.controls();
+    c.enableZoom = false; c.enablePan = false; c.enableRotate = false;
+    c.autoRotate = !reduce; c.autoRotateSpeed = 0.4;
+    box.style.opacity = 1;
+    document.getElementById('globeFallback').style.visibility = 'hidden';
+  }
+
+  async function ensure() {
+    if (globe || loading) return; loading = true;
+    try {
+      if (!window.Globe) await load('assets/globe.gl.min.js');
+      if (!window.WORLD_COUNTRIES) await load('assets/countries.js');
+      build(); sync();
+    } catch (e) { console.warn('3D‑глобус недоступен, показываю картинку', e); }
+  }
+
+  // рисуем только когда слайд открыт, чтобы не нагружать видеокарту
+  function sync() {
+    if (!globe) return;
+    if (slide.classList.contains('active')) globe.resumeAnimation(); else globe.pauseAnimation();
+  }
+  new MutationObserver(() => { if (slide.classList.contains('active')) ensure(); sync(); }).observe(slide, { attributes: true, attributeFilter: ['class'] });
+  if (slide.classList.contains('active')) ensure();
+  else addEventListener('load', () => setTimeout(ensure, 1500)); // заранее, пока смотрят первые слайды
 })();
 </script>
 </body>
