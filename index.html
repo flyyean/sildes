@@ -79,8 +79,27 @@ body{background:#050e4a}
 .cover .logos img{height:52px}
 .cover .logos .dgsc{height:62px}
 .cover .logos .agency{height:58px}
-.cover h1.t2{font-size:62px;line-height:1.05}
-.cover h1.t2 small{display:block;margin-top:14px;font-size:30px;font-weight:700;letter-spacing:.04em;line-height:1.25;text-transform:uppercase}
+/* главная: надзаголовок, градиентный заголовок по словам, линия, подзаголовок с маркером на «ИИ» */
+.home .eyebrow{font-size:15px;font-weight:700;letter-spacing:.42em;color:#dfe4ff;margin-bottom:18px;padding-left:.42em;text-shadow:0 0 14px rgba(10,20,110,.9),0 2px 6px rgba(10,20,110,.8)}
+.home h1.t2{font-size:64px;line-height:1.05;text-shadow:none;filter:drop-shadow(0 8px 30px rgba(10,20,110,.6))}
+.home h1.t2 .w{display:inline-block;opacity:0;color:transparent;-webkit-background-clip:text;background-clip:text;
+  background-image:linear-gradient(110deg,transparent 42%,rgba(255,255,255,.95) 50%,transparent 58%),linear-gradient(180deg,#fff 30%,#b9c4ff);
+  background-size:260% 100%,100% 100%;background-position:130% 0,0 0;background-repeat:no-repeat}
+.home.active h1.t2 .w{animation:wordin .9s var(--ease) both,shine 1.4s ease-in-out 1.9s both;animation-delay:calc(var(--w) * 180ms + 400ms),1.9s}
+@keyframes wordin{from{opacity:0;filter:blur(12px);transform:translateY(14px)}to{opacity:1;filter:none;transform:none}}
+@keyframes shine{from{background-position:130% 0,0 0}to{background-position:-30% 0,0 0}}
+.home .rule{display:block;width:140px;height:2px;margin:22px 0 20px;border-radius:2px;background:linear-gradient(90deg,transparent,#8796ff,transparent);box-shadow:0 0 12px rgba(135,150,255,.8);transform:scaleX(0)}
+.home.active .rule{animation:rulein .8s var(--ease) .95s both}
+@keyframes rulein{to{transform:scaleX(1)}}
+.home .sub2{font-size:28px;font-weight:700;letter-spacing:.04em;line-height:1.3;text-transform:uppercase;opacity:0}
+.home.active .sub2{animation:rise .8s var(--ease) 1.05s both}
+.slide.home.active .hl::before{animation-delay:1.9s}
+/* логотипы в одной стеклянной полосе с разделителями */
+.home .logos{left:50%;right:auto;translate:-50% 0;gap:0;padding:12px 6px;border-radius:18px;background:rgba(40,58,175,.42);border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.28)}
+.home .logos img{height:44px;padding:0 30px;box-sizing:content-box}
+.home .logos img + img{border-left:1px solid rgba(255,255,255,.22)}
+.home .logos .agency{height:46px}.home .logos .dgsc{height:50px}
+@media (prefers-reduced-motion:reduce){.home h1.t2 .w,.home .sub2{opacity:1;animation:none}.home .rule{transform:none}}
 .cover .orb{position:absolute;left:50%;top:50%;width:300px;height:300px;margin:-180px 0 0 -150px;opacity:.38;filter:brightness(.82) saturate(.9);box-shadow:0 30px 80px -10px rgba(120,90,255,.3)}
 .cover h1{position:relative;font-size:76px;font-weight:900;letter-spacing:.02em;line-height:1.05;text-shadow:0 8px 40px rgba(10,20,110,.6)}
 .cover .star{position:absolute;left:50%;bottom:58px;width:128px;margin-left:-64px;filter:drop-shadow(0 0 30px rgba(140,160,255,.8))}
@@ -186,14 +205,19 @@ body{background:#050e4a}
 <canvas id="net" aria-hidden="true"></canvas>
 
 <!-- 1 · COVER -->
-<section class="slide cover active">
+<section class="slide cover home active">
   <div class="logos" data-a="fade">
     <img class="agency" src="assets/agency-logo.png" alt="Ұлттық қауіпсіздік комитеті">
     <img src="assets/image5.webp" alt="AI & Digital Ministry">
     <img class="dgsc" src="assets/image4.webp" alt="DGSC AI Academy">
   </div>
   <div class="orb" data-a="zoom"><video src="assets/orb.mp4" muted loop playsinline preload="auto"></video></div>
-  <div class="center" style="position:absolute;inset:0;top:-60px"><h1 class="t2" data-a style="--d:2">ПРАКТИЧЕСКОЕ ПРИМЕНЕНИЕ<small>ИИ в деятельности специальных<br>государственных органов</small></h1></div>
+  <div class="center" style="position:absolute;inset:0;top:-50px">
+    <div class="eyebrow" data-a="fade" style="--d:1">DGSC AI ACADEMY</div>
+    <h1 class="t2"><span class="w" style="--w:0">ПРАКТИЧЕСКОЕ</span> <span class="w" style="--w:1">ПРИМЕНЕНИЕ</span></h1>
+    <i class="rule"></i>
+    <p class="sub2"><span class="hl">ИИ</span> в деятельности специальных<br>государственных органов</p>
+  </div>
   <img class="star" src="assets/image3.webp" alt="" data-a="zoom" style="--d:4">
 </section>
 
