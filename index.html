@@ -91,17 +91,22 @@ body{background:#050e4a}
 .secret .caret::after{content:"";position:absolute;left:3px;top:0;width:4px;height:1.05em;border-radius:2px;background:var(--peri2);box-shadow:0 0 12px var(--peri2)}
 .secret .caret.idle::after{animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
-/* слайд 8: четыре команды летают по восьмёрке */
-.eight{position:absolute;inset:0;pointer-events:none;opacity:0;--fig8:path("M640.0 362.0 L656.4 377.0 L672.8 391.9 L689.1 406.7 L705.4 421.3 L721.6 435.5 L737.7 449.4 L753.7 462.9 L769.5 475.9 L785.2 488.4 L800.7 500.2 L816.1 511.4 L831.2 521.8 L846.0 531.4 L860.7 540.2 L875.0 548.2 L889.1 555.2 L902.8 561.3 L916.3 566.5 L929.4 570.6 L942.1 573.7 L954.5 575.8 L966.5 576.9 L978.1 576.9 L989.3 575.8 L1000.0 573.7 L1010.4 570.6 L1020.2 566.5 L1029.6 561.3 L1038.6 555.2 L1047.0 548.2 L1055.0 540.2 L1062.4 531.4 L1069.4 521.8 L1075.8 511.4 L1081.7 500.2 L1087.0 488.4 L1091.8 475.9 L1096.0 462.9 L1099.7 449.4 L1102.9 435.5 L1105.4 421.3 L1107.4 406.7 L1108.9 391.9 L1109.7 377.0 L1110.0 362.0 L1109.7 347.0 L1108.9 332.1 L1107.4 317.3 L1105.4 302.7 L1102.9 288.5 L1099.7 274.6 L1096.0 261.1 L1091.8 248.1 L1087.0 235.6 L1081.7 223.8 L1075.8 212.6 L1069.4 202.2 L1062.4 192.6 L1055.0 183.8 L1047.0 175.8 L1038.6 168.8 L1029.6 162.7 L1020.2 157.5 L1010.4 153.4 L1000.0 150.3 L989.3 148.2 L978.1 147.1 L966.5 147.1 L954.5 148.2 L942.1 150.3 L929.4 153.4 L916.3 157.5 L902.8 162.7 L889.1 168.8 L875.0 175.8 L860.7 183.8 L846.0 192.6 L831.2 202.2 L816.1 212.6 L800.7 223.8 L785.2 235.6 L769.5 248.1 L753.7 261.1 L737.7 274.6 L721.6 288.5 L705.4 302.7 L689.1 317.3 L672.8 332.1 L656.4 347.0 L640.0 362.0 L623.6 377.0 L607.2 391.9 L590.9 406.7 L574.6 421.3 L558.4 435.5 L542.3 449.4 L526.3 462.9 L510.5 475.9 L494.8 488.4 L479.3 500.2 L463.9 511.4 L448.8 521.8 L434.0 531.4 L419.3 540.2 L405.0 548.2 L390.9 555.2 L377.2 561.3 L363.7 566.5 L350.6 570.6 L337.9 573.7 L325.5 575.8 L313.5 576.9 L301.9 576.9 L290.7 575.8 L280.0 573.7 L269.6 570.6 L259.8 566.5 L250.4 561.3 L241.4 555.2 L233.0 548.2 L225.0 540.2 L217.6 531.4 L210.6 521.8 L204.2 511.4 L198.3 500.2 L193.0 488.4 L188.2 475.9 L184.0 462.9 L180.3 449.4 L177.1 435.5 L174.6 421.3 L172.6 406.7 L171.1 391.9 L170.3 377.0 L170.0 362.0 L170.3 347.0 L171.1 332.1 L172.6 317.3 L174.6 302.7 L177.1 288.5 L180.3 274.6 L184.0 261.1 L188.2 248.1 L193.0 235.6 L198.3 223.8 L204.2 212.6 L210.6 202.2 L217.6 192.6 L225.0 183.8 L233.0 175.8 L241.4 168.8 L250.4 162.7 L259.8 157.5 L269.6 153.4 L280.0 150.3 L290.7 148.2 L301.9 147.1 L313.5 147.1 L325.5 148.2 L337.9 150.3 L350.6 153.4 L363.7 157.5 L377.2 162.7 L390.9 168.8 L405.0 175.8 L419.3 183.8 L434.0 192.6 L448.8 202.2 L463.9 212.6 L479.3 223.8 L494.8 235.6 L510.5 248.1 L526.3 261.1 L542.3 274.6 L558.4 288.5 L574.6 302.7 L590.9 317.3 L607.2 332.1 L623.6 347.0 L640.0 362.0 Z")}
-.slide.active .eight{animation:fade 1s var(--ease) 1.6s both}
-.eight .blk{position:absolute;left:0;top:0;padding:16px 26px;border-radius:16px;white-space:nowrap;font:600 24px/1 "SF Mono",Menlo,Consolas,monospace;color:#fff;
+/* слайд 8: от цифры идёт пульсация, под линиями появляются четыре команды */
+.secret .num{position:relative}
+.slide.s8.active .num{animation:glow8 2.4s ease-in-out 1.4s infinite}
+@keyframes glow8{50%{filter:drop-shadow(0 0 22px rgba(135,150,255,.9))}}
+.s8 .ring{position:absolute;left:50%;top:50%;width:150px;height:150px;margin:-75px 0 0 -75px;border-radius:50%;border:2px solid rgba(150,165,255,.75);opacity:0;pointer-events:none;
+  box-shadow:0 0 18px rgba(135,150,255,.5),inset 0 0 18px rgba(135,150,255,.35)}
+.slide.s8.active .ring{animation:ring8 3.6s cubic-bezier(.2,.6,.3,1) infinite;animation-delay:calc(var(--i) * 1.2s + 1.4s)}
+@keyframes ring8{0%{opacity:0;transform:scale(.6)}12%{opacity:.9}100%{opacity:0;transform:scale(4.2)}}
+.cmds{display:flex;gap:16px;margin-top:34px}
+.cmds div{padding:14px 22px;border-radius:14px;white-space:nowrap;font:600 21px/1 "SF Mono",Menlo,Consolas,monospace;color:#fff;opacity:0;
   background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.06));border:1px solid rgba(255,255,255,.3);
   backdrop-filter:blur(14px) saturate(150%);-webkit-backdrop-filter:blur(14px) saturate(150%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 18px 40px -16px rgba(0,0,30,.7);
-  offset-path:var(--fig8);offset-rotate:0deg;animation:fig8 36s linear infinite paused;animation-delay:calc(var(--i) * -9s)}
-.eight .blk b{color:var(--peri2);font-weight:700}
-.slide.active .eight .blk{animation-play-state:running}
-@keyframes fig8{from{offset-distance:0%}to{offset-distance:100%}}
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 18px 40px -16px rgba(0,0,30,.7)}
+.cmds b{color:var(--peri2);font-weight:700}
+.slide.s8.active .cmds div{animation:cmdin .7s var(--ease) both;animation-delay:calc(var(--i) * 1.2s + 1.75s)}
+@keyframes cmdin{0%{opacity:0;transform:translateY(-14px) scale(.9)}60%{opacity:1;box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 0 26px rgba(135,150,255,.9)}100%{opacity:1;transform:none}}
 
 /* ---------- chrome ---------- */
 .num-hl{color:var(--blue);font-weight:800;font-variant-numeric:tabular-nums}
@@ -925,9 +930,11 @@ body{background:#050e4a}
     s.querySelector('.num').textContent = i + 1;
     const h = s.querySelector('h2'); h.dataset.text = t; h.textContent = t;
     if (i === 7) {
-      const e = document.createElement('div'); e.className = 'eight'; e.setAttribute('aria-hidden', 'true');
-      e.innerHTML = ['/dashboard', '/processmap', '/resume-reuniao', '/action-plan'].map((c, k) => `<div class="blk" style="--i:${k}"><b>/</b>${c.slice(1)}</div>`).join('');
-      s.prepend(e);
+      s.classList.add('s8');
+      s.querySelector('.num').insertAdjacentHTML('beforeend', [0, 1, 2].map(k => `<span class="ring" style="--i:${k}"></span>`).join(''));
+      const c = document.createElement('div'); c.className = 'cmds';
+      c.innerHTML = ['/dashboard', '/processmap', '/resume-reuniao', '/action-plan'].map((t, k) => `<div style="--i:${k}"><b>/</b>${t.slice(1)}</div>`).join('');
+      s.querySelector('.dots').after(c);
     }
     s.querySelector('.dots').innerHTML = secrets.map((_, k) => `<i class="${k <= i ? 'on' : ''}"></i>`).join('');
     anchor.before(s);
