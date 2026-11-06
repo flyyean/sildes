@@ -580,12 +580,12 @@ body{background:#050e4a}
 <section class="slide"><div class="pad">
   <style>
     /* бенто-карточки в духе NGXUI: тёмное стекло, живая картинка внутри, подпись в левом нижнем углу */
-    .neq15{position:absolute;left:50px;right:57px;top:200px;height:330px;display:grid;grid-template-columns:500px 1fr 500px;align-items:center}
-    .bc{position:relative;height:330px;border-radius:22px;overflow:hidden;
+    .neq15{position:absolute;left:50px;right:57px;top:255px;height:210px;display:grid;grid-template-columns:500px 1fr 500px;align-items:center}
+    .bc{position:relative;height:210px;padding:32px;border-radius:22px;overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center;
       background:linear-gradient(160deg,rgba(26,36,118,.75),rgba(10,18,78,.75));border:1px solid rgba(255,255,255,.18);
       box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 26px 60px -20px var(--glow)}
     .bc.vibe{--glow:rgba(170,80,255,.7)} .bc.prog{--glow:rgba(40,150,255,.7)}
-    .bc .cap{position:absolute;left:28px;bottom:24px;z-index:2}
+    .bc .cap{position:relative;z-index:2}
     .bc .cap b{display:block;font-size:34px;font-weight:800;letter-spacing:.02em;line-height:1.1}
     .bc .cap span{display:block;margin-top:6px;font-size:16px;font-weight:500;color:rgba(255,255,255,.75)}
     .bc .art{position:absolute;inset:0;opacity:0}
@@ -594,18 +594,18 @@ body{background:#050e4a}
     .bc.vibe{background:linear-gradient(160deg,rgba(78,28,150,.75),rgba(104,24,112,.75))}
     /* ПРОГРАММИРОВАНИЕ: мерцающая точечная матрица */
     .bc canvas{position:absolute;inset:0;width:100%;height:100%}
-    .bc.prog .fade{position:absolute;inset:0;background:linear-gradient(0deg,rgba(10,18,78,.95) 0%,transparent 55%);z-index:1}
-    .bc.vibe .fade{position:absolute;inset:0;background:linear-gradient(0deg,rgba(60,14,84,.9) 0%,transparent 50%);z-index:1}
+    .bc.prog .fade{position:absolute;inset:0;background:radial-gradient(60% 55% at 50% 50%,rgba(10,18,78,.92),transparent);z-index:1}
+    .bc.vibe .fade{position:absolute;inset:0;background:radial-gradient(60% 55% at 50% 50%,rgba(60,14,84,.85),transparent);z-index:1}
   </style>
   <div class="h" data-a>Что такое vibe coding?</div>
   <div class="neq15">
     <div class="bc vibe" data-a="zoom" style="--d:2">
-      <canvas class="art" id="stars15" width="1000" height="660"></canvas><div class="fade"></div>
+      <canvas class="art" id="stars15" width="1000" height="420"></canvas><div class="fade"></div>
       <div class="cap"><b>VIBE CODING</b><span>Идея словами – код пишет ИИ</span></div>
     </div>
     <div data-a="zoom" style="--d:5;text-align:center;font-size:96px;font-weight:800;line-height:1">≠</div>
     <div class="bc prog" data-a="zoom" style="--d:3">
-      <canvas class="art" id="dotm" width="1000" height="660"></canvas><div class="fade"></div>
+      <canvas class="art" id="dotm" width="1000" height="420"></canvas><div class="fade"></div>
       <div class="cap"><b>ПРОГРАММИРОВАНИЕ</b><span>Синтаксис, код и отладка вручную</span></div>
     </div>
   </div>
