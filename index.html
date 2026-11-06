@@ -101,7 +101,8 @@ body{background:#050e4a}
   box-shadow:0 0 12px rgba(135,150,255,.3),inset 0 0 12px rgba(135,150,255,.2)}
 .slide.s8.active .ring{animation:ring8 4.6s cubic-bezier(.25,.6,.35,1) both;animation-delay:calc(var(--i) * 1.6s + 1.4s)}
 @keyframes ring8{0%{opacity:0;transform:scale(.6)}15%{opacity:.6}100%{opacity:0;transform:scale(3.6)}}
-.cmds{display:flex;gap:16px;margin-top:34px}
+.secret .dots{position:relative}
+.cmds{position:absolute;left:50%;top:40px;width:max-content;translate:-50% 0;display:flex;gap:16px}
 .cmds div{padding:14px 22px;border-radius:14px;white-space:nowrap;font:600 21px/1 "SF Mono",Menlo,Consolas,monospace;color:#fff;opacity:0;
   background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.06));border:1px solid rgba(255,255,255,.3);
   backdrop-filter:blur(14px) saturate(150%);-webkit-backdrop-filter:blur(14px) saturate(150%);
@@ -931,14 +932,14 @@ body{background:#050e4a}
     const s = tpl.content.firstElementChild.cloneNode(true);
     s.querySelector('.num').textContent = i + 1;
     const h = s.querySelector('h2'); h.dataset.text = t; h.textContent = t;
+    s.querySelector('.dots').innerHTML = secrets.map((_, k) => `<i class="${k <= i ? 'on' : ''}"></i>`).join('');
     if (i === 7) {
       s.classList.add('s8');
       s.querySelector('.num').insertAdjacentHTML('beforeend', [0, 1, 2, 3].map(k => `<span class="ring" style="--i:${k}"></span>`).join(''));
       const c = document.createElement('div'); c.className = 'cmds';
       c.innerHTML = ['/dashboard', '/processmap', '/resume-reuniao', '/action-plan'].map((t, k) => `<div style="--i:${k}"><b>/</b>${t.slice(1)}</div>`).join('');
-      s.querySelector('.dots').after(c);
+      s.querySelector('.dots').append(c); // блоки вне потока: цифра, текст и линии стоят как на других секретах
     }
-    s.querySelector('.dots').innerHTML = secrets.map((_, k) => `<i class="${k <= i ? 'on' : ''}"></i>`).join('');
     anchor.before(s);
   });
 
