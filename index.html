@@ -84,6 +84,24 @@ body{background:#050e4a}
 .secret .dots{display:flex;gap:10px;margin-top:40px}
 .secret .dots i{width:34px;height:6px;border-radius:3px;background:rgba(255,255,255,.18)}
 .secret .dots i.on{background:var(--peri2)}
+.slide.secret.cut{transition:none}
+.secret h2{white-space:pre;min-height:1.25em}
+.secret h2 .ch{opacity:0}.secret h2 .ch.on{opacity:1}
+.secret .caret{display:inline-block;position:relative;width:0;height:1em;vertical-align:-.1em}
+.secret .caret::after{content:"";position:absolute;left:3px;top:0;width:4px;height:1.05em;border-radius:2px;background:var(--peri2);box-shadow:0 0 12px var(--peri2)}
+.secret .caret.idle::after{animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+/* слайд 8: четыре команды летают по восьмёрке */
+.eight{position:absolute;inset:0;pointer-events:none;opacity:0;--fig8:path("M640.0 362.0 L656.4 377.0 L672.8 391.9 L689.1 406.7 L705.4 421.3 L721.6 435.5 L737.7 449.4 L753.7 462.9 L769.5 475.9 L785.2 488.4 L800.7 500.2 L816.1 511.4 L831.2 521.8 L846.0 531.4 L860.7 540.2 L875.0 548.2 L889.1 555.2 L902.8 561.3 L916.3 566.5 L929.4 570.6 L942.1 573.7 L954.5 575.8 L966.5 576.9 L978.1 576.9 L989.3 575.8 L1000.0 573.7 L1010.4 570.6 L1020.2 566.5 L1029.6 561.3 L1038.6 555.2 L1047.0 548.2 L1055.0 540.2 L1062.4 531.4 L1069.4 521.8 L1075.8 511.4 L1081.7 500.2 L1087.0 488.4 L1091.8 475.9 L1096.0 462.9 L1099.7 449.4 L1102.9 435.5 L1105.4 421.3 L1107.4 406.7 L1108.9 391.9 L1109.7 377.0 L1110.0 362.0 L1109.7 347.0 L1108.9 332.1 L1107.4 317.3 L1105.4 302.7 L1102.9 288.5 L1099.7 274.6 L1096.0 261.1 L1091.8 248.1 L1087.0 235.6 L1081.7 223.8 L1075.8 212.6 L1069.4 202.2 L1062.4 192.6 L1055.0 183.8 L1047.0 175.8 L1038.6 168.8 L1029.6 162.7 L1020.2 157.5 L1010.4 153.4 L1000.0 150.3 L989.3 148.2 L978.1 147.1 L966.5 147.1 L954.5 148.2 L942.1 150.3 L929.4 153.4 L916.3 157.5 L902.8 162.7 L889.1 168.8 L875.0 175.8 L860.7 183.8 L846.0 192.6 L831.2 202.2 L816.1 212.6 L800.7 223.8 L785.2 235.6 L769.5 248.1 L753.7 261.1 L737.7 274.6 L721.6 288.5 L705.4 302.7 L689.1 317.3 L672.8 332.1 L656.4 347.0 L640.0 362.0 L623.6 377.0 L607.2 391.9 L590.9 406.7 L574.6 421.3 L558.4 435.5 L542.3 449.4 L526.3 462.9 L510.5 475.9 L494.8 488.4 L479.3 500.2 L463.9 511.4 L448.8 521.8 L434.0 531.4 L419.3 540.2 L405.0 548.2 L390.9 555.2 L377.2 561.3 L363.7 566.5 L350.6 570.6 L337.9 573.7 L325.5 575.8 L313.5 576.9 L301.9 576.9 L290.7 575.8 L280.0 573.7 L269.6 570.6 L259.8 566.5 L250.4 561.3 L241.4 555.2 L233.0 548.2 L225.0 540.2 L217.6 531.4 L210.6 521.8 L204.2 511.4 L198.3 500.2 L193.0 488.4 L188.2 475.9 L184.0 462.9 L180.3 449.4 L177.1 435.5 L174.6 421.3 L172.6 406.7 L171.1 391.9 L170.3 377.0 L170.0 362.0 L170.3 347.0 L171.1 332.1 L172.6 317.3 L174.6 302.7 L177.1 288.5 L180.3 274.6 L184.0 261.1 L188.2 248.1 L193.0 235.6 L198.3 223.8 L204.2 212.6 L210.6 202.2 L217.6 192.6 L225.0 183.8 L233.0 175.8 L241.4 168.8 L250.4 162.7 L259.8 157.5 L269.6 153.4 L280.0 150.3 L290.7 148.2 L301.9 147.1 L313.5 147.1 L325.5 148.2 L337.9 150.3 L350.6 153.4 L363.7 157.5 L377.2 162.7 L390.9 168.8 L405.0 175.8 L419.3 183.8 L434.0 192.6 L448.8 202.2 L463.9 212.6 L479.3 223.8 L494.8 235.6 L510.5 248.1 L526.3 261.1 L542.3 274.6 L558.4 288.5 L574.6 302.7 L590.9 317.3 L607.2 332.1 L623.6 347.0 L640.0 362.0 Z")}
+.slide.active .eight{animation:fade 1s var(--ease) 1.6s both}
+.eight .blk{position:absolute;left:0;top:0;padding:16px 26px;border-radius:16px;white-space:nowrap;font:600 24px/1 "SF Mono",Menlo,Consolas,monospace;color:#fff;
+  background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.06));border:1px solid rgba(255,255,255,.3);
+  backdrop-filter:blur(14px) saturate(150%);-webkit-backdrop-filter:blur(14px) saturate(150%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 18px 40px -16px rgba(0,0,30,.7);
+  offset-path:var(--fig8);offset-rotate:0deg;animation:fig8 36s linear infinite paused;animation-delay:calc(var(--i) * -9s)}
+.eight .blk b{color:var(--peri2);font-weight:700}
+.slide.active .eight .blk{animation-play-state:running}
+@keyframes fig8{from{offset-distance:0%}to{offset-distance:100%}}
 
 /* ---------- chrome ---------- */
 .num-hl{color:var(--blue);font-weight:800;font-variant-numeric:tabular-nums}
@@ -509,6 +527,12 @@ body{background:#050e4a}
     .vs div{border-radius:10px;padding:12px 18px;font-size:16px;font-weight:700;line-height:1.3;display:flex;align-items:center}
     .vs .a{background:var(--peri);}
     .vs .b{border:1px solid rgba(255,255,255,.35);font-weight:600;color:var(--muted)}
+    .vs>div{opacity:0}
+    .slide.active .vs>div{animation:vsin .6s var(--ease) both;animation-delay:calc(var(--i) * 260ms + 1s)}
+    .slide.active .vs>.a{animation-name:vsinl}
+    .slide.active .vs>.b{animation-name:vsinr}
+    @keyframes vsinl{from{opacity:0;transform:translateX(-22px) scale(.96)}to{opacity:1;transform:none}}
+    @keyframes vsinr{from{opacity:0;transform:translateX(22px) scale(.96)}to{opacity:1;transform:none}}
   </style>
   <div class="h" data-a>Что такое vibe coding?</div>
   <div style="display:grid;grid-template-columns:350px 1fr;gap:28px;margin-top:34px;height:500px">
@@ -519,14 +543,14 @@ body{background:#050e4a}
     <div style="display:flex;flex-direction:column;gap:18px">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
         <div class="wcard" data-a style="--d:2;display:flex;align-items:center;gap:18px;padding:0 24px;height:86px"><img class="inv" src="assets/image37.webp" alt="OpenAI" style="height:38px"><span style="border-left:1px solid #ccd;padding-left:16px;font-size:16px;color:#3a4270;font-weight:500;line-height:1.3">один из<br>сооснователей</span></div>
-        <div class="wcard" data-a style="--d:3;display:flex;align-items:center;gap:18px;padding:0 24px;height:86px"><img src="assets/image38.webp" alt="Tesla" style="height:52px"><span style="border-left:1px solid #ccd;padding-left:16px;font-size:16px;color:#3a4270;font-weight:500;line-height:1.3">ex-директор<br>по ИИ</span></div>
+        <div class="wcard" data-a style="--d:3;display:flex;align-items:center;gap:18px;padding:0 24px;height:86px"><img class="inv" src="assets/image38.webp" alt="Tesla" style="height:52px"><span style="border-left:1px solid #ccd;padding-left:16px;font-size:16px;color:#3a4270;font-weight:500;line-height:1.3">ex-директор<br>по ИИ</span></div>
       </div>
       <div class="card" data-a style="--d:4;flex:1;padding:28px 28px;display:flex;flex-direction:column">
         <div style="font-weight:800;font-size:23px;line-height:1.3;margin-bottom:22px">Главные отличия от классического<br>программирования</div>
         <div class="vs">
-          <div class="a">УЧИШЬ СИНТАКСИС<br>ЯЗЫКА ГОДАМИ</div><div class="b">ОБЩАЕШЬСЯ<br>НА РОДНОМ ЯЗЫКЕ</div>
-          <div class="a">ИЩЕШЬ ПРОПУЩЕННУЮ<br>ЗАПЯТУЮ 2 ЧАСА</div><div class="b">ГОВОРИШЬ ИИ:<br>«НЕ РАБОТАЕТ, ИСПРАВЬ»</div>
-          <div class="a">ГЛАВНЫЙ НАВЫК<br>ЗНАНИЕ КОДА</div><div class="b">ГЛАВНЫЙ НАВЫК<br>ПОНИМАНИЕ ЛОГИКИ ПРОДУКТА</div>
+          <div class="a" style="--i:0">УЧИШЬ СИНТАКСИС<br>ЯЗЫКА ГОДАМИ</div><div class="b" style="--i:1">ОБЩАЕШЬСЯ<br>НА РОДНОМ ЯЗЫКЕ</div>
+          <div class="a" style="--i:2">ИЩЕШЬ ПРОПУЩЕННУЮ<br>ЗАПЯТУЮ 2 ЧАСА</div><div class="b" style="--i:3">ГОВОРИШЬ ИИ:<br>«НЕ РАБОТАЕТ, ИСПРАВЬ»</div>
+          <div class="a" style="--i:4">ГЛАВНЫЙ НАВЫК<br>ЗНАНИЕ КОДА</div><div class="b" style="--i:5">ГЛАВНЫЙ НАВЫК<br>ПОНИМАНИЕ ЛОГИКИ ПРОДУКТА</div>
         </div>
       </div>
     </div>
@@ -794,7 +818,7 @@ body{background:#050e4a}
   <div class="sub" data-a style="--d:1;font-size:19.5px;color:#fff;font-weight:500;margin-top:26px;padding-left:7px">Слева направо – от быстрой и дешёвой к самой умной и мощной.</div>
   <div data-a="fade" style="--d:2;position:absolute;left:69px;right:63px;top:160px;display:flex;justify-content:space-between;font-size:16px;font-weight:700;padding:0 8px 10px;border-bottom:3px solid;border-image:linear-gradient(90deg,rgba(255,255,255,.05),rgba(255,255,255,.6) 30%,#fff) 1">
     <span>Скорость</span><span>Максимум возможностей</span></div>
-  <div class="mdl m1" data-a style="--d:3;left:69px;width:273.5px"><div class="tier">FREE / GO</div><h4>GPT‑6 Luna</h4><hr><div class="role">Быстрые ответы</div><p>Повседневные вопросы, короткие правки и простые задачи</p><div class="mode">Instant, Think</div></div><div class="mdl m2" data-a style="--d:4;left:360.5px;width:273.5px"><div class="tier">WORK / CODEX</div><h4>GPT‑6.1 Terra</h4><hr><div class="role">Баланс цены и качества</div><p>Отчёты, анализ документов, работа с кодом и компьютером</p><div class="mode">Только в Work и Codex, не в чате</div></div><div class="mdl m3" data-a style="--d:5;left:652px;width:273.5px"><div class="tier">PLUS / PRO / BUSINESS</div><h4>GPT‑6 Sol</h4><hr><div class="role">Основная модель</div><p>Код, исследования, дизайн и сложная профессиональная работа</p><div class="mode">Instant, Medium, High, Extra High</div></div><div class="mdl m4" data-a style="--d:6;left:943.5px;width:273.5px"><div class="tier">PRO / BUSINESS / ENTERPRISE</div><h4>GPT‑6 Pro</h4><hr><div class="role">Максимум точности</div><p>Для самых сложных и длительных работ</p><div class="mode">Работает на GPT‑6 Astra</div></div>
+  <div class="mdl m1" data-a style="--d:3;left:69px;width:273.5px"><div class="tier">FREE / GO</div><h4>GPT‑6 Luna</h4><hr><div class="role">Быстрые ответы</div><p>Повседневные вопросы, короткие правки и простые задачи</p><div class="mode">Instant, Think</div></div><div class="mdl m2" data-a style="--d:4;left:360.5px;width:273.5px"><div class="tier">WORK / CODEX</div><h4>GPT‑6.1 Terra</h4><hr><div class="role">Баланс цены и качества</div><p>Отчёты, анализ документов, работа с кодом и компьютером</p><div class="mode">Только в Work и Codex, не в чате</div></div><div class="mdl m3" data-a style="--d:5;left:652px;width:273.5px"><div class="tier">PLUS / PRO / BUSINESS</div><h4>GPT‑6 Sol</h4><hr><div class="role">Основная модель</div><p>Код, исследования, дизайн и сложная профессиональная работа</p><div class="mode">Instant, Medium, High, Extra High</div></div><div class="mdl m4" data-a style="--d:6;left:943.5px;width:273.5px"><div class="tier">PRO / BUSINESS / ENTERPRISE</div><h4>GPT‑6 Astra</h4><hr><div class="role">Максимум точности</div><p>Для самых сложных и длительных работ</p><div class="mode">Режим Pro</div></div>
   <div data-a style="--d:7;position:absolute;left:0;right:0;top:600px;text-align:center;font-size:18px">Luna для скорости, Sol для большинства серьёзных задач, Pro для максимальной точности и автономности</div>
   <div class="gpt-chip" data-a="fade" style="--d:8"><img src="assets/chatgpt-white.webp" alt="ChatGPT"></div>
 </div></section>
@@ -807,7 +831,7 @@ body{background:#050e4a}
 
 <!-- 29–35 · SECRETS (generated in JS) -->
 <template id="secret-tpl"><section class="slide secret"><div class="badge"><img src="assets/image63.webp" alt="">Внешний контур</div><div class="pad center">
-  <div class="num" data-a="zoom"></div><h2 data-a style="--d:2"></h2><div class="dots" data-a="fade" style="--d:3"></div>
+  <div class="num"></div><h2></h2><div class="dots"></div>
 </div></section></template>
 <div id="secrets-anchor" hidden></div>
 
@@ -899,7 +923,12 @@ body{background:#050e4a}
   secrets.forEach((t, i) => {
     const s = tpl.content.firstElementChild.cloneNode(true);
     s.querySelector('.num').textContent = i + 1;
-    s.querySelector('h2').textContent = t;
+    const h = s.querySelector('h2'); h.dataset.text = t; h.textContent = t;
+    if (i === 7) {
+      const e = document.createElement('div'); e.className = 'eight'; e.setAttribute('aria-hidden', 'true');
+      e.innerHTML = ['/dashboard', '/processmap', '/resume-reuniao', '/action-plan'].map((c, k) => `<div class="blk" style="--i:${k}"><b>/</b>${c.slice(1)}</div>`).join('');
+      s.prepend(e);
+    }
     s.querySelector('.dots').innerHTML = secrets.map((_, k) => `<i class="${k <= i ? 'on' : ''}"></i>`).join('');
     anchor.before(s);
   });
@@ -939,9 +968,30 @@ body{background:#050e4a}
   }
   addEventListener('resize', fit); fit();
 
+  // печать заголовка секрета: появляется курсор, едет вправо, за ним печатается текст
+  let typeTimer = 0;
+  function typeSecret(s) {
+    clearTimeout(typeTimer);
+    const h = s.querySelector('h2'), text = h.dataset.text;
+    if (reduce) { h.textContent = text; return; }
+    h.innerHTML = [...text].map(c => `<span class="ch">${c}</span>`).join('');
+    const chars = [...h.querySelectorAll('.ch')], caret = document.createElement('span');
+    caret.className = 'caret'; h.prepend(caret);
+    let k = 0;
+    const step = () => {
+      if (k >= chars.length) { caret.classList.add('idle'); return; }
+      chars[k].classList.add('on'); chars[k].after(caret); k++;
+      typeTimer = setTimeout(step, 55);
+    };
+    typeTimer = setTimeout(step, 450);
+  }
+
   function go(i, push = true) {
     i = Math.max(0, Math.min(N - 1, i));
     if (i === cur && slides[i].classList.contains('active')) return;
+    // между секретами без затухания: меняется только цифра и печатается текст
+    const cut = slides[cur].classList.contains('secret') && slides[i].classList.contains('secret');
+    slides.forEach(x => x.classList.toggle('cut', cut && (x === slides[cur] || x === slides[i])));
     slides[cur].classList.remove('active');
     slides[cur].querySelectorAll('video').forEach(v => v.pause());
     cur = i;
@@ -949,6 +999,7 @@ body{background:#050e4a}
     s.classList.add('active');
     s.querySelectorAll('video').forEach(v => { v.currentTime = 0; v.play().catch(() => {}); });
     runCounters(s);
+    if (s.classList.contains('secret')) typeSecret(s);
     // заранее подгружаем видео на соседних слайдах
     [slides[cur + 1], slides[cur - 1]].forEach(n => n && n.querySelectorAll('video').forEach(v => v.preload = 'auto'));
     document.getElementById('count').textContent = `${cur + 1} / ${N}`;
