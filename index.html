@@ -93,20 +93,22 @@ body{background:#050e4a}
 @keyframes blink{50%{opacity:0}}
 /* слайд 8: от цифры идёт пульсация, под линиями появляются четыре команды */
 .secret .num{position:relative}
-.slide.s8.active .num{animation:glow8 2.4s ease-in-out 1.4s infinite}
-@keyframes glow8{50%{filter:drop-shadow(0 0 22px rgba(135,150,255,.9))}}
-.s8 .ring{position:absolute;left:50%;top:50%;width:150px;height:150px;margin:-75px 0 0 -75px;border-radius:50%;border:2px solid rgba(150,165,255,.75);opacity:0;pointer-events:none;
-  box-shadow:0 0 18px rgba(135,150,255,.5),inset 0 0 18px rgba(135,150,255,.35)}
-.slide.s8.active .ring{animation:ring8 3.6s cubic-bezier(.2,.6,.3,1) infinite;animation-delay:calc(var(--i) * 1.2s + 1.4s)}
-@keyframes ring8{0%{opacity:0;transform:scale(.6)}12%{opacity:.9}100%{opacity:0;transform:scale(4.2)}}
+/* после четырёх импульсов за цифрой остаётся лёгкое свечение */
+.slide.s8.active .num{animation:glow8in 1.6s ease-out 7.4s both,glow8 4s ease-in-out 9s infinite}
+@keyframes glow8in{from{filter:drop-shadow(0 0 0 rgba(135,150,255,0))}to{filter:drop-shadow(0 0 16px rgba(135,150,255,.45))}}
+@keyframes glow8{0%,100%{filter:drop-shadow(0 0 16px rgba(135,150,255,.45))}50%{filter:drop-shadow(0 0 24px rgba(135,150,255,.6))}}
+.s8 .ring{position:absolute;left:50%;top:50%;width:150px;height:150px;margin:-75px 0 0 -75px;border-radius:50%;border:1.5px solid rgba(150,165,255,.5);opacity:0;pointer-events:none;
+  box-shadow:0 0 12px rgba(135,150,255,.3),inset 0 0 12px rgba(135,150,255,.2)}
+.slide.s8.active .ring{animation:ring8 4.6s cubic-bezier(.25,.6,.35,1) both;animation-delay:calc(var(--i) * 1.6s + 1.4s)}
+@keyframes ring8{0%{opacity:0;transform:scale(.6)}15%{opacity:.6}100%{opacity:0;transform:scale(3.6)}}
 .cmds{display:flex;gap:16px;margin-top:34px}
 .cmds div{padding:14px 22px;border-radius:14px;white-space:nowrap;font:600 21px/1 "SF Mono",Menlo,Consolas,monospace;color:#fff;opacity:0;
   background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.06));border:1px solid rgba(255,255,255,.3);
   backdrop-filter:blur(14px) saturate(150%);-webkit-backdrop-filter:blur(14px) saturate(150%);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 18px 40px -16px rgba(0,0,30,.7)}
 .cmds b{color:var(--peri2);font-weight:700}
-.slide.s8.active .cmds div{animation:cmdin .7s var(--ease) both;animation-delay:calc(var(--i) * 1.2s + 1.75s)}
-@keyframes cmdin{0%{opacity:0;transform:translateY(-14px) scale(.9)}60%{opacity:1;box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 0 26px rgba(135,150,255,.9)}100%{opacity:1;transform:none}}
+.slide.s8.active .cmds div{animation:cmdin .7s var(--ease) both;animation-delay:calc(var(--i) * 1.6s + 1.85s)}
+@keyframes cmdin{0%{opacity:0;transform:translateY(-14px) scale(.9)}60%{opacity:1;box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 0 18px rgba(135,150,255,.55)}100%{opacity:1;transform:none}}
 
 /* ---------- chrome ---------- */
 .num-hl{color:var(--blue);font-weight:800;font-variant-numeric:tabular-nums}
@@ -931,7 +933,7 @@ body{background:#050e4a}
     const h = s.querySelector('h2'); h.dataset.text = t; h.textContent = t;
     if (i === 7) {
       s.classList.add('s8');
-      s.querySelector('.num').insertAdjacentHTML('beforeend', [0, 1, 2].map(k => `<span class="ring" style="--i:${k}"></span>`).join(''));
+      s.querySelector('.num').insertAdjacentHTML('beforeend', [0, 1, 2, 3].map(k => `<span class="ring" style="--i:${k}"></span>`).join(''));
       const c = document.createElement('div'); c.className = 'cmds';
       c.innerHTML = ['/dashboard', '/processmap', '/resume-reuniao', '/action-plan'].map((t, k) => `<div style="--i:${k}"><b>/</b>${t.slice(1)}</div>`).join('');
       s.querySelector('.dots').after(c);
