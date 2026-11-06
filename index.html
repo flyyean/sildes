@@ -1010,6 +1010,7 @@ body{background:#050e4a}
     // между секретами без затухания: меняется только цифра и печатается текст
     const cut = slides[cur].classList.contains('secret') && slides[i].classList.contains('secret');
     slides.forEach(x => x.classList.toggle('cut', cut && (x === slides[cur] || x === slides[i])));
+    dispatchEvent(new CustomEvent('slidechange', { detail: { dir: i > cur ? 1 : -1 } }));
     slides[cur].classList.remove('active');
     slides[cur].querySelectorAll('video').forEach(v => v.pause());
     cur = i;
@@ -1105,10 +1106,16 @@ body{background:#050e4a}
     ctx.setTransform(k, 0, 0, k, 0, 0);
   }
   addEventListener('resize', size); size();
-  function frame() {
+  // при переключении слайда сеть на мгновение «разгоняется» в сторону перехода и плавно возвращается к обычной скорости
+  let kick = 0, dir = 1, last = performance.now();
+  addEventListener('slidechange', e => { kick = 1; dir = e.detail.dir; });
+  function frame(now = performance.now()) {
+    const dt = Math.min(64, now - last) / 16.7; last = now;
+    kick *= Math.pow(0.955, dt);
+    const boost = 1 + 7 * kick, push = -dir * 9 * kick;
     ctx.clearRect(0, 0, W, H);
     for (const p of pts) {
-      p.x += p.vx; p.y += p.vy;
+      p.x += (p.vx * boost + push) * dt; p.y += p.vy * boost * dt;
       if (p.x < -20) p.x = W + 20; else if (p.x > W + 20) p.x = -20;
       if (p.y < -20) p.y = H + 20; else if (p.y > H + 20) p.y = -20;
     }
