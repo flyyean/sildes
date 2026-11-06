@@ -34,6 +34,15 @@ body{background:#050e4a}
 .slide.light{background:#f4f6ff}
 .slide.light::before{display:none}
 
+/* выделение маркером: полоса проводится слева направо после появления заголовка */
+.hl{position:relative;display:inline-block;z-index:0;padding:0 .14em;margin:0 -.04em}
+.hl::before{content:"";position:absolute;z-index:-1;left:-.06em;right:-.06em;top:.08em;bottom:.02em;border-radius:.18em .32em .22em .36em;
+  background:linear-gradient(90deg,rgba(64,110,255,.95),rgba(132,96,255,.95));box-shadow:0 10px 30px -8px rgba(90,100,255,.8);
+  transform:skewX(-8deg) rotate(-1.2deg) scaleX(0);transform-origin:left center}
+.slide.active .hl::before{animation:hlsweep .9s cubic-bezier(.65,0,.25,1) 1.1s forwards}
+@keyframes hlsweep{to{transform:skewX(-8deg) rotate(-1.2deg) scaleX(1)}}
+@media (prefers-reduced-motion:reduce){.hl::before{transform:skewX(-8deg) rotate(-1.2deg)}}
+
 /* entrance animation */
 .slide [data-a]{opacity:0;transform:translateY(18px)}
 .slide.active [data-a]{animation:rise .7s var(--ease) forwards;animation-delay:calc(var(--d,0) * 90ms + 120ms)}
@@ -526,7 +535,7 @@ body{background:#050e4a}
 <!-- 13 · SECTION -->
 <section class="slide section"><div class="pad center">
   <div class="orb" data-a="zoom"><video src="assets/orb.mp4" muted loop playsinline preload="none"></video></div>
-  <h2 data-a style="--d:2">ЧТО ТАКОЕ VIBE CODING?</h2>
+  <h2 data-a style="--d:2">ЧТО ТАКОЕ <span class="hl">VIBE CODING</span>?</h2>
 </div></section>
 
 <!-- 14 · КАРПАТЫЙ -->
@@ -610,7 +619,7 @@ body{background:#050e4a}
 <!-- 17 · SECTION -->
 <section class="slide section"><div class="pad center">
   <div class="orb" data-a="zoom"><video src="assets/orb.mp4" muted loop playsinline preload="none"></video></div>
-  <h2 data-a style="--d:2">ЧТО ТАКОЕ PROMPT?</h2>
+  <h2 data-a style="--d:2">ЧТО ТАКОЕ <span class="hl">PROMPT</span>?</h2>
 </div></section>
 
 <!-- 18 · PROMPT -->
@@ -835,7 +844,7 @@ body{background:#050e4a}
 <!-- 28 · SECTION -->
 <section class="slide section"><div class="badge"><img src="assets/image63.webp" alt="">Внешний контур</div><div class="pad center">
   <div class="orb" data-a="zoom"><video src="assets/orb.mp4" muted loop playsinline preload="none"></video></div>
-  <h2 data-a style="--d:2">Секреты использования<br>ChatGPT</h2>
+  <h2 data-a style="--d:2">Секреты использования<br><span class="hl">ChatGPT</span></h2>
 </div></section>
 
 <!-- 29–35 · SECRETS (generated in JS) -->
