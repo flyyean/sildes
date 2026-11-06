@@ -1104,20 +1104,39 @@ body{background:#050e4a}
   // планета целиком под тремя кнопками -> плавное приближение к Казахстану -> точки Казахстана становятся голубыми
   const FAR = { lat: 30, lng: 40, altitude: 3.6 }, NEAR = { lat: 46, lng: 67, altitude: 1.22 }; // NEAR: планета целиком помещается под кнопками
   const kz = f => f.properties.iso === 'KZ';
-  const paint = blue => globe.hexPolygonColor(f => kz(f) && blue ? '#29b6ff' : '#ffffff');
-  let timers = [];
+  const WHITE = [1, 1, 1], BLUE = [0x29 / 255, 0xb6 / 255, 1];
+  let timers = [], raf = 0, kzMat = null;
+
+  // у Казахстана свой материал: цвет меняем плавно, не перестраивая слой точек
+  function kzMaterial() {
+    if (kzMat) return kzMat;
+    globe.scene().traverse(o => {
+      if (!kzMat && o.isMesh && o.__data && o.__data.properties && kz(o.__data)) { o.material = o.material.clone(); kzMat = o.material; }
+    });
+    return kzMat;
+  }
+  // setStyle переводит из sRGB, иначе голубой в линейном пространстве выглядит почти белым
+  const css = (rgb, k = 1) => `rgb(${rgb.map(v => Math.round(v * k * 255)).join(',')})`;
+  const setKz = (rgb, glow = 0) => { const m = kzMaterial(); if (!m) return; m.color.setStyle(css(rgb)); m.emissive.setStyle(css(BLUE, glow)); };
+  const mix = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t);
+  const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 
   function build() {
     globe = Globe({ animateIn: false, rendererConfig: { antialias: true, alpha: true } })(box)
       .width(box.clientWidth).height(box.clientHeight)
       .backgroundColor('rgba(0,0,0,0)')
-      .globeImageUrl('assets/earth-dark.jpg') // как в примере three-globe «hexed polygons»
-      .showAtmosphere(true).atmosphereColor('#6fb8ff').atmosphereAltitude(0.17)
+      .globeImageUrl('assets/earth-dark.jpg') // как в примере three-globe «hexed polygons», но в синих тонах презентации
+      .showAtmosphere(true).atmosphereColor('#6fb8ff').atmosphereAltitude(0.18)
       .hexPolygonsData(window.WORLD_COUNTRIES.features)
       .hexPolygonUseDots(true)
       .hexPolygonResolution(3).hexPolygonMargin(0.3).hexPolygonAltitude(0.005)
-      .hexPolygonsTransitionDuration(0);
-    paint(false);
+      .hexPolygonsTransitionDuration(0)
+      .hexPolygonColor(() => '#ffffff')
+      // пульсация вокруг Казахстана
+      .ringColor(() => t => `rgba(150,225,255,${1 - t})`)
+      .ringMaxRadius(12).ringPropagationSpeed(4).ringRepeatPeriod(1400).ringAltitude(0.008);
+    const m = globe.globeMaterial();
+    m.color.set('#5f7cff'); m.emissive.set('#0c2196'); m.emissiveIntensity = 0.7; m.shininess = 6;
     const c = globe.controls();
     c.enableZoom = false; c.enablePan = false; c.enableRotate = false; c.autoRotate = false;
     box.style.opacity = 1;
@@ -1125,11 +1144,23 @@ body{background:#050e4a}
   }
 
   function play() {
-    timers.forEach(clearTimeout); timers = [];
-    if (reduce) { globe.pointOfView(NEAR, 0); paint(true); return; }
-    globe.pointOfView(FAR, 0); paint(false);
+    timers.forEach(clearTimeout); timers = []; cancelAnimationFrame(raf);
+    globe.ringsData([]);
+    if (reduce) { globe.pointOfView(NEAR, 0); setKz(BLUE); return; }
+    globe.pointOfView(FAR, 0); setKz(WHITE);
     timers.push(setTimeout(() => globe.pointOfView(NEAR, 2600), 1100));
-    timers.push(setTimeout(() => paint(true), 3800));
+    // после приближения: белый -> голубой за 1,4 с, затем мягкое «дыхание» свечения и кольца
+    timers.push(setTimeout(() => {
+      const t0 = performance.now();
+      const tick = now => {
+        const k = (now - t0) / 1400;
+        if (k < 1) setKz(mix(WHITE, BLUE, ease(k)), 0.25 * ease(k));
+        else setKz(BLUE, 0.25 + 0.3 * Math.sin((now - t0 - 1400) / 700) ** 2);
+        if (k >= 1 && !globe.ringsData().length) globe.ringsData([{ lat: 48, lng: 67.5 }]);
+        raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+    }, 3700));
   }
 
   async function ensure() {
@@ -1144,7 +1175,7 @@ body{background:#050e4a}
   // рисуем только когда слайд открыт, чтобы не нагружать видеокарту
   function sync() {
     if (!globe) return;
-    if (slide.classList.contains('active')) globe.resumeAnimation(); else globe.pauseAnimation();
+    if (slide.classList.contains('active')) globe.resumeAnimation(); else { globe.pauseAnimation(); cancelAnimationFrame(raf); timers.forEach(clearTimeout); }
   }
   let was = false;
   new MutationObserver(() => {
