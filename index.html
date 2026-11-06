@@ -1104,21 +1104,20 @@ body{background:#050e4a}
   // планета целиком под тремя кнопками -> плавное приближение к Казахстану -> точки Казахстана становятся голубыми
   const FAR = { lat: 30, lng: 40, altitude: 3.6 }, NEAR = { lat: 46, lng: 67, altitude: 1.22 }; // NEAR: планета целиком помещается под кнопками
   const kz = f => f.properties.iso === 'KZ';
-  const paint = blue => globe.hexPolygonColor(f => kz(f) && blue ? '#29b6ff' : 'rgba(255,255,255,.75)');
+  const paint = blue => globe.hexPolygonColor(f => kz(f) && blue ? '#29b6ff' : '#ffffff');
   let timers = [];
 
   function build() {
     globe = Globe({ animateIn: false, rendererConfig: { antialias: true, alpha: true } })(box)
       .width(box.clientWidth).height(box.clientHeight)
       .backgroundColor('rgba(0,0,0,0)')
+      .globeImageUrl('assets/earth-dark.jpg') // как в примере three-globe «hexed polygons»
       .showAtmosphere(true).atmosphereColor('#6fb8ff').atmosphereAltitude(0.17)
       .hexPolygonsData(window.WORLD_COUNTRIES.features)
       .hexPolygonUseDots(true)
-      .hexPolygonResolution(3).hexPolygonMargin(0.45).hexPolygonAltitude(0.004)
+      .hexPolygonResolution(3).hexPolygonMargin(0.3).hexPolygonAltitude(0.005)
       .hexPolygonsTransitionDuration(0);
     paint(false);
-    const m = globe.globeMaterial();
-    m.color.set('#0c1d86'); m.emissive.set('#0a1670'); m.emissiveIntensity = 0.55; m.shininess = 0.4;
     const c = globe.controls();
     c.enableZoom = false; c.enablePan = false; c.enableRotate = false; c.autoRotate = false;
     box.style.opacity = 1;
