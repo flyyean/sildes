@@ -20,16 +20,15 @@ body{background:#050e4a}
 
 /* ---------- stage ---------- */
 #viewport{position:fixed;inset:0}
-#deck{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center}
+#deck{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center;border-radius:6px;overflow:hidden;
+  background:linear-gradient(160deg,var(--bg2),var(--bg) 55%,#071257)}
+/* общий фон-нейросеть: один холст под всеми слайдами, поэтому анимация не прерывается при переключении */
+#net{position:absolute;inset:0;width:1280px;height:720px;pointer-events:none}
 .slide{position:absolute;inset:0;overflow:hidden;border-radius:6px;
   background:
     radial-gradient(900px 520px at 85% -10%, rgba(64,96,255,.35), transparent 60%),
-    radial-gradient(700px 500px at -5% 110%, rgba(110,80,255,.25), transparent 60%),
-    linear-gradient(160deg,var(--bg2),var(--bg) 55%,#071257);
+    radial-gradient(700px 500px at -5% 110%, rgba(110,80,255,.25), transparent 60%);
   opacity:0;visibility:hidden;transform:scale(1.015);transition:opacity .6s var(--ease),transform .8s var(--ease),visibility 0s .6s}
-.slide::before{content:"";position:absolute;inset:0;pointer-events:none;
-  background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
-  background-size:64px 64px;mask-image:radial-gradient(ellipse at center,#000 30%,transparent 80%)}
 .slide.active{opacity:1;visibility:visible;transform:none;transition:opacity .6s var(--ease),transform .8s var(--ease)}
 .slide.light{background:#f4f6ff}
 .slide.light::before{display:none}
@@ -135,8 +134,7 @@ body{background:#050e4a}
 .slide.gl{background:
   radial-gradient(560px 400px at 16% 32%, rgba(70,100,255,.55), transparent 70%),
   radial-gradient(560px 440px at 84% 78%, rgba(130,80,255,.45), transparent 70%),
-  radial-gradient(460px 320px at 62% 6%, rgba(30,140,255,.35), transparent 70%),
-  linear-gradient(160deg,var(--bg2),var(--bg) 55%,#071257)}
+  radial-gradient(460px 320px at 62% 6%, rgba(30,140,255,.35), transparent 70%)}
 .slide.gl :is(.wcard,.card,.f,.chip,.src,.slab,.slab19,.mdl,.gbox,.tab){
   background:linear-gradient(135deg,rgba(255,255,255,.17),rgba(255,255,255,.05))!important;
   border:1px solid rgba(255,255,255,.26)!important;color:#fff!important;
@@ -179,6 +177,7 @@ body{background:#050e4a}
 </head>
 <body>
 <div id="viewport"><div id="deck">
+<canvas id="net" aria-hidden="true"></canvas>
 
 <!-- 1 · COVER -->
 <section class="slide cover active">
@@ -1087,6 +1086,45 @@ body{background:#050e4a}
   slides[0].classList.remove('active');
   cur = 0;
   go(Number.isFinite(start) ? start - 1 : 0, false);
+})();
+</script>
+<script>
+// фон: летающие точки, соединённые линиями как нейросеть; живёт под всеми слайдами
+(() => {
+  const cv = document.getElementById('net'), ctx = cv.getContext('2d');
+  const W = 1280, H = 720, N = 78, LINK = 150;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const pts = Array.from({ length: N }, () => ({
+    x: Math.random() * W, y: Math.random() * H,
+    vx: (Math.random() - .5) * .28, vy: (Math.random() - .5) * .28,
+    r: 1.1 + Math.random() * 1.4
+  }));
+  function size() { // чёткость с учётом масштаба сцены и ретины
+    const k = Math.min(innerWidth / W, innerHeight / H) * (devicePixelRatio || 1);
+    cv.width = Math.round(W * k); cv.height = Math.round(H * k);
+    ctx.setTransform(k, 0, 0, k, 0, 0);
+  }
+  addEventListener('resize', size); size();
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    for (const p of pts) {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < -20) p.x = W + 20; else if (p.x > W + 20) p.x = -20;
+      if (p.y < -20) p.y = H + 20; else if (p.y > H + 20) p.y = -20;
+    }
+    ctx.lineWidth = 0.8;
+    for (let i = 0; i < N; i++) for (let j = i + 1; j < N; j++) {
+      const a = pts[i], b = pts[j], dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy;
+      if (d2 < LINK * LINK) {
+        ctx.strokeStyle = `rgba(150,170,255,${(1 - Math.sqrt(d2) / LINK) * 0.28})`;
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+      }
+    }
+    ctx.fillStyle = 'rgba(190,205,255,.75)';
+    for (const p of pts) { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.2832); ctx.fill(); }
+    if (!reduce) requestAnimationFrame(frame);
+  }
+  frame();
 })();
 </script>
 </body>
