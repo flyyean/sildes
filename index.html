@@ -1125,7 +1125,6 @@ body{background:#050e4a}
     globe = Globe({ animateIn: false, rendererConfig: { antialias: true, alpha: true } })(box)
       .width(box.clientWidth).height(box.clientHeight)
       .backgroundColor('rgba(0,0,0,0)')
-      .globeImageUrl('assets/earth-dark.jpg') // как в примере three-globe «hexed polygons», но в синих тонах презентации
       .showAtmosphere(true).atmosphereColor('#6fb8ff').atmosphereAltitude(0.18)
       .hexPolygonsData(window.WORLD_COUNTRIES.features)
       .hexPolygonUseDots(true)
@@ -1136,7 +1135,8 @@ body{background:#050e4a}
       .ringColor(() => t => `rgba(150,225,255,${1 - t})`)
       .ringMaxRadius(12).ringPropagationSpeed(4).ringRepeatPeriod(1400).ringAltitude(0.008);
     const m = globe.globeMaterial();
-    m.color.set('#5f7cff'); m.emissive.set('#0c2196'); m.emissiveIntensity = 0.7; m.shininess = 6;
+    // сплошной шар в цвете презентации (без текстуры Земли), точки - как в примере three-globe «Hexed Country Polygons»
+    m.color.set('#1a35c9'); m.emissive.set('#0a1a8c'); m.emissiveIntensity = 0.6; m.shininess = 8;
     const c = globe.controls();
     c.enableZoom = false; c.enablePan = false; c.enableRotate = false; c.autoRotate = false;
     box.style.opacity = 1;
