@@ -236,7 +236,7 @@ body{background:#050e4a}
     <div style="display:flex;flex-direction:column;gap:14px;min-height:0">
       <div data-a="zoom" style="--d:3;flex:1;position:relative;overflow:hidden;border-radius:20px" class="gbox">
         <img id="globeFallback" src="assets/image8.webp" alt="Земной шар с Казахстаном" style="position:absolute;left:50%;top:92px;width:470px;margin-left:-235px">
-        <div id="kzGlobe" aria-hidden="true" style="position:absolute;left:50%;top:74px;width:600px;height:560px;margin-left:-300px;pointer-events:none;opacity:0;transition:opacity 1s"></div>
+        <div id="kzGlobe" aria-hidden="true" style="position:absolute;left:0;right:0;top:92px;bottom:0;pointer-events:none;opacity:0;transition:opacity 1s"></div>
         <div style="position:absolute;top:18px;left:18px;right:18px;display:grid;grid-template-columns:1fr 1.25fr 1fr;gap:16px">
           <div class="tab">Граждане</div><div class="tab">Экономика и&nbsp;бизнес</div><div class="tab">Госаппарат</div>
         </div>
@@ -1097,34 +1097,40 @@ body{background:#050e4a}
   const box = document.getElementById('kzGlobe'); if (!box) return;
   const slide = box.closest('.slide');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const ASTANA = { lat: 51.17, lng: 71.43 };
   let globe = null, loading = false;
 
   const load = src => new Promise((ok, fail) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = fail; document.head.appendChild(s); });
 
+  // планета целиком под тремя кнопками -> плавное приближение к Казахстану -> точки Казахстана становятся голубыми
+  const FAR = { lat: 30, lng: 40, altitude: 3.6 }, NEAR = { lat: 46, lng: 67, altitude: 1.22 }; // NEAR: планета целиком помещается под кнопками
+  const kz = f => f.properties.iso === 'KZ';
+  const paint = blue => globe.hexPolygonColor(f => kz(f) && blue ? '#29b6ff' : 'rgba(255,255,255,.75)');
+  let timers = [];
+
   function build() {
-    const kz = f => f.properties.iso === 'KZ';
     globe = Globe({ animateIn: false, rendererConfig: { antialias: true, alpha: true } })(box)
-      .width(600).height(560)
+      .width(box.clientWidth).height(box.clientHeight)
       .backgroundColor('rgba(0,0,0,0)')
       .showAtmosphere(true).atmosphereColor('#6fb8ff').atmosphereAltitude(0.17)
       .hexPolygonsData(window.WORLD_COUNTRIES.features)
       .hexPolygonUseDots(true)
-      .hexPolygonResolution(f => kz(f) ? 4 : 3)
-      .hexPolygonMargin(f => kz(f) ? 0.38 : 0.45)
-      .hexPolygonAltitude(f => kz(f) ? 0.012 : 0.004)
-      .hexPolygonColor(f => kz(f) ? '#29b6ff' : 'rgba(255,255,255,.75)')
-      .ringsData([ASTANA]).ringColor(() => t => `rgba(255,255,255,${1 - t})`)
-      .ringMaxRadius(6).ringPropagationSpeed(2.2).ringRepeatPeriod(1600)
-      .pointsData([ASTANA]).pointColor(() => '#ffffff').pointAltitude(0.02).pointRadius(0.55);
+      .hexPolygonResolution(3).hexPolygonMargin(0.45).hexPolygonAltitude(0.004)
+      .hexPolygonsTransitionDuration(0);
+    paint(false);
     const m = globe.globeMaterial();
     m.color.set('#0c1d86'); m.emissive.set('#0a1670'); m.emissiveIntensity = 0.55; m.shininess = 0.4;
-    globe.pointOfView({ lat: 42, lng: 88, altitude: 1.2 }, 0); // Казахстан выезжает слева в центр
     const c = globe.controls();
-    c.enableZoom = false; c.enablePan = false; c.enableRotate = false;
-    c.autoRotate = !reduce; c.autoRotateSpeed = 0.4;
+    c.enableZoom = false; c.enablePan = false; c.enableRotate = false; c.autoRotate = false;
     box.style.opacity = 1;
     document.getElementById('globeFallback').style.visibility = 'hidden';
+  }
+
+  function play() {
+    timers.forEach(clearTimeout); timers = [];
+    if (reduce) { globe.pointOfView(NEAR, 0); paint(true); return; }
+    globe.pointOfView(FAR, 0); paint(false);
+    timers.push(setTimeout(() => globe.pointOfView(NEAR, 2600), 1100));
+    timers.push(setTimeout(() => paint(true), 3800));
   }
 
   async function ensure() {
@@ -1132,7 +1138,7 @@ body{background:#050e4a}
     try {
       if (!window.Globe) await load('assets/globe.gl.min.js');
       if (!window.WORLD_COUNTRIES) await load('assets/countries.js');
-      build(); sync();
+      build(); sync(); if (slide.classList.contains('active')) play();
     } catch (e) { console.warn('3D‑глобус недоступен, показываю картинку', e); }
   }
 
@@ -1141,7 +1147,13 @@ body{background:#050e4a}
     if (!globe) return;
     if (slide.classList.contains('active')) globe.resumeAnimation(); else globe.pauseAnimation();
   }
-  new MutationObserver(() => { if (slide.classList.contains('active')) ensure(); sync(); }).observe(slide, { attributes: true, attributeFilter: ['class'] });
+  let was = false;
+  new MutationObserver(() => {
+    const on = slide.classList.contains('active');
+    if (on) ensure();
+    if (on && !was && globe) play();
+    was = on; sync();
+  }).observe(slide, { attributes: true, attributeFilter: ['class'] });
   if (slide.classList.contains('active')) ensure();
   else addEventListener('load', () => setTimeout(ensure, 1500)); // заранее, пока смотрят первые слайды
 })();
