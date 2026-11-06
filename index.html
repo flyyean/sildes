@@ -85,9 +85,14 @@ body{background:#050e4a}
     repeating-linear-gradient(100deg,#3b5bff 10%,#a5b4fc 15%,#7aa8ff 20%,#c4b5fd 25%,#5b7cff 30%);
   background-size:300% 100%,200% 100%;background-position:50% 50%,50% 50%;
   -webkit-mask-image:radial-gradient(ellipse 95% 85% at 50% 0%,#000 25%,transparent 80%);mask-image:radial-gradient(ellipse 95% 85% at 50% 0%,#000 25%,transparent 80%);
-  animation:aurora 40s linear infinite}
+  animation:aurora 53s linear infinite}
 @keyframes aurora{from{background-position:50% 50%,50% 50%}to{background-position:350% 50%,350% 50%}}
-.cover.home .orb{width:400px;height:400px;margin:-215px 0 0 -200px;opacity:.6;filter:none}
+.cover.home .orb{width:340px;height:340px;margin:-185px 0 0 -170px;opacity:.6;filter:none}
+/* пульсирующее свечение вокруг шара */
+.home .halo{position:absolute;left:50%;top:345px;width:340px;height:340px;margin:-170px 0 0 -170px;border-radius:50%;pointer-events:none;opacity:0;
+  box-shadow:0 0 60px 18px rgba(120,140,255,.55),0 0 140px 50px rgba(150,100,255,.35)}
+.home.active .halo{animation:fade 1s ease-out .4s forwards,halo 3.2s ease-in-out 1.4s infinite}
+@keyframes halo{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.55;transform:scale(1.06)}}
 .home h1.t2{position:absolute;left:0;right:0;top:276px;text-align:center;font-size:66px;line-height:1.04;color:#fff;
   text-shadow:0 4px 24px rgba(10,20,110,.75),0 2px 6px rgba(10,20,110,.6)}
 .home h1.t2 .w{display:inline-block;opacity:0}
@@ -216,6 +221,7 @@ body{background:#050e4a}
     <img src="assets/image5.webp" alt="AI & Digital Ministry">
     <img class="dgsc" src="assets/image4.webp" alt="DGSC AI Academy">
   </div>
+  <div class="halo" aria-hidden="true"></div>
   <div class="orb" data-a="zoom"><video src="assets/orb.mp4" muted loop playsinline preload="auto"></video></div>
   <h1 class="t2"><span class="w" style="--w:0">ПРАКТИЧЕСКОЕ</span><br><span class="w" style="--w:1">ПРИМЕНЕНИЕ</span></h1>
   <p class="sub2">ИИ в деятельности специальных<br>государственных органов</p>
