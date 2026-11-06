@@ -579,13 +579,30 @@ body{background:#050e4a}
 <!-- 15 · ≠ -->
 <section class="slide"><div class="pad">
   <style>
-    .neq .pill{height:112px;border-radius:10px;font-size:37px;font-weight:600;letter-spacing:.01em;background:#0a2fd6;box-shadow:0 10px 40px rgba(20,60,255,.55)}
+    /* бенто-сетки: плитки появляются по очереди, потом по ним бежит мягкая волна подсветки */
+    .neq15{position:absolute;left:50px;right:57px;top:212px;height:300px;display:grid;grid-template-columns:470px 1fr 560px;align-items:center}
+    .bento{height:300px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:1fr 1.15fr 1fr;gap:9px;padding:10px;border-radius:22px;
+      border:1px solid rgba(255,255,255,.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 24px 60px -18px var(--glow)}
+    .bento.vibe{--glow:rgba(170,70,255,.75);background:linear-gradient(135deg,rgba(136,72,255,.75),rgba(206,62,214,.75))}
+    .bento.prog{--glow:rgba(20,140,255,.75);background:linear-gradient(135deg,rgba(22,150,255,.75),rgba(28,72,232,.75))}
+    .bento .t{border-radius:13px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;gap:10px;
+      color:rgba(255,255,255,.9);font-weight:700;font-size:20px;opacity:0;overflow:hidden;position:relative}
+    .bento .t svg{width:26px;height:26px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+    .bento .t span{font-size:14px;font-weight:600;color:rgba(255,255,255,.85);white-space:nowrap}
+    .bento .t code{font:700 22px/1 "SF Mono",Menlo,Consolas,monospace;color:#fff}
+    .bento .lbl{grid-column:1 / -1;background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.38);font-size:34px;font-weight:800;letter-spacing:.02em;color:#fff}
+    .bento .t::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.28) 50%,transparent 70%);transform:translateX(-120%)}
+    .slide.active .bento .t{animation:bpop .55s var(--ease) both;animation-delay:calc(var(--i) * 80ms + var(--b))}
+    .slide.active .bento .t::after{animation:bshine 4.2s ease-in-out infinite;animation-delay:calc(var(--i) * 260ms + var(--b) + 1.2s)}
+    .bento.vibe{--b:.35s} .bento.prog{--b:.75s}
+    @keyframes bpop{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:none}}
+    @keyframes bshine{0%{transform:translateX(-120%)}30%,100%{transform:translateX(120%)}}
   </style>
   <div class="h" data-a>Что такое vibe coding?</div>
-  <div class="neq" style="position:absolute;left:50px;right:57px;top:304px;display:grid;grid-template-columns:391px 1fr 575px;align-items:center">
-    <div class="pill" data-a="left" style="--d:1">VIBE CODING</div>
-    <div data-a="zoom" style="--d:3;text-align:center;font-size:96px;font-weight:800;line-height:1">≠</div>
-    <div class="pill" data-a style="--d:2">ПРОГРАММИРОВАНИЕ</div>
+  <div class="neq15">
+    <div class="bento vibe"><div class="t" style="--i:0;grid-column:span 2"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg><span>«сделай мне…»</span></div><div class="t" style="--i:1;grid-column:span 1"><svg viewBox="0 0 24 24"><path d="M12 3l2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2z"/></svg></div><div class="t" style="--i:2;grid-column:span 1">AI</div><div class="t lbl" style="--i:3">VIBE CODING</div><div class="t" style="--i:4;grid-column:span 1"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></div><div class="t" style="--i:5;grid-column:span 1"><svg viewBox="0 0 24 24"><path d="M3 12h2M7 8v8M11 5v14M15 9v6M19 11v2"/></svg></div><div class="t" style="--i:6;grid-column:span 2"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg><span>на родном языке</span></div></div>
+    <div data-a="zoom" style="--d:6;text-align:center;font-size:96px;font-weight:800;line-height:1">≠</div>
+    <div class="bento prog"><div class="t" style="--i:0;grid-column:span 2"><code>&lt;/&gt;</code><span>синтаксис</span></div><div class="t" style="--i:1;grid-column:span 1"><code>{ }</code></div><div class="t" style="--i:2;grid-column:span 1"><code>;</code></div><div class="t lbl" style="--i:3">ПРОГРАММИРОВАНИЕ</div><div class="t" style="--i:4;grid-column:span 1"><code>01</code></div><div class="t" style="--i:5;grid-column:span 1"><code>=&gt;</code></div><div class="t" style="--i:6;grid-column:span 2"><code>if ( )</code><span>отладка</span></div></div>
   </div>
 </div></section>
 
