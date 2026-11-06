@@ -93,6 +93,9 @@ body{background:#050e4a}
   box-shadow:0 0 60px 18px rgba(120,140,255,.55),0 0 140px 50px rgba(150,100,255,.35)}
 .home.active .halo{animation:fade 1s ease-out .4s forwards,halo 3.2s ease-in-out 1.4s infinite}
 @keyframes halo{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.55;transform:scale(1.06)}}
+/* сам шар «дышит» в такт свечению */
+.slide.cover.home.active .orb{animation:zoom .7s var(--ease) .12s both,orbpulse 3.2s ease-in-out 1.4s infinite}
+@keyframes orbpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
 .home h1.t2{position:absolute;left:0;right:0;top:276px;text-align:center;font-size:66px;line-height:1.04;color:#fff;
   text-shadow:0 4px 24px rgba(10,20,110,.75),0 2px 6px rgba(10,20,110,.6)}
 .home h1.t2 .w{display:inline-block;opacity:0}
