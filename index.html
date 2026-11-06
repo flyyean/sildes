@@ -235,8 +235,7 @@ body{background:#050e4a}
     </div>
     <div style="display:flex;flex-direction:column;gap:14px;min-height:0">
       <div data-a="zoom" style="--d:3;flex:1;position:relative;overflow:hidden;border-radius:20px" class="gbox">
-        <img id="globeFallback" src="assets/image8.webp" alt="Земной шар с Казахстаном" style="position:absolute;left:50%;top:92px;width:470px;margin-left:-235px">
-        <div id="kzGlobe" aria-hidden="true" style="position:absolute;left:0;right:0;top:92px;bottom:0;pointer-events:none;opacity:0;transition:opacity 1s"></div>
+        <img src="assets/image8.webp" alt="Земной шар с Казахстаном" style="position:absolute;left:50%;top:92px;width:470px;margin-left:-235px">
         <div style="position:absolute;top:18px;left:18px;right:18px;display:grid;grid-template-columns:1fr 1.25fr 1fr;gap:16px">
           <div class="tab">Граждане</div><div class="tab">Экономика и&nbsp;бизнес</div><div class="tab">Госаппарат</div>
         </div>
@@ -1088,104 +1087,6 @@ body{background:#050e4a}
   slides[0].classList.remove('active');
   cur = 0;
   go(Number.isFinite(start) ? start - 1 : 0, false);
-})();
-</script>
-<script>
-// слайд 3: живой 3D‑глобус (globe.gl / three-globe, MIT). Мир - точками, Казахстан - яркими точками.
-// Библиотека грузится после показа страницы; если WebGL недоступен, остаётся картинка.
-(() => {
-  const box = document.getElementById('kzGlobe'); if (!box) return;
-  const slide = box.closest('.slide');
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let globe = null, loading = false;
-
-  const load = src => new Promise((ok, fail) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = fail; document.head.appendChild(s); });
-
-  // планета целиком под тремя кнопками -> плавное приближение к Казахстану -> точки Казахстана становятся голубыми
-  const FAR = { lat: 30, lng: 40, altitude: 3.6 }, NEAR = { lat: 46, lng: 67, altitude: 1.22 }; // NEAR: планета целиком помещается под кнопками
-  const kz = f => f.properties.iso === 'KZ';
-  const WHITE = [1, 1, 1], BLUE = [0x29 / 255, 0xb6 / 255, 1];
-  let timers = [], raf = 0, kzMat = null;
-
-  // у Казахстана свой материал: цвет меняем плавно, не перестраивая слой точек
-  function kzMaterial() {
-    if (kzMat) return kzMat;
-    globe.scene().traverse(o => {
-      if (!kzMat && o.isMesh && o.__data && o.__data.properties && kz(o.__data)) { o.material = o.material.clone(); kzMat = o.material; }
-    });
-    return kzMat;
-  }
-  // setStyle переводит из sRGB, иначе голубой в линейном пространстве выглядит почти белым
-  const css = (rgb, k = 1) => `rgb(${rgb.map(v => Math.round(v * k * 255)).join(',')})`;
-  const setKz = (rgb, glow = 0) => { const m = kzMaterial(); if (!m) return; m.color.setStyle(css(rgb)); m.emissive.setStyle(css(BLUE, glow)); };
-  const mix = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t);
-  const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-
-  function build() {
-    globe = Globe({ animateIn: false, rendererConfig: { antialias: true, alpha: true } })(box)
-      .width(box.clientWidth).height(box.clientHeight)
-      .backgroundColor('rgba(0,0,0,0)')
-      .showAtmosphere(true).atmosphereColor('#6fb8ff').atmosphereAltitude(0.18)
-      .hexPolygonsData(window.WORLD_COUNTRIES.features)
-      .hexPolygonUseDots(true)
-      .hexPolygonResolution(3).hexPolygonMargin(0.3).hexPolygonAltitude(0.005)
-      .hexPolygonsTransitionDuration(0)
-      .hexPolygonColor(() => '#ffffff')
-      // пульсация вокруг Казахстана
-      .ringColor(() => t => `rgba(150,225,255,${1 - t})`)
-      .ringMaxRadius(12).ringPropagationSpeed(4).ringRepeatPeriod(1400).ringAltitude(0.008);
-    const m = globe.globeMaterial();
-    // сплошной шар в цвете презентации (без текстуры Земли), точки - как в примере three-globe «Hexed Country Polygons»
-    m.color.set('#1a35c9'); m.emissive.set('#0a1a8c'); m.emissiveIntensity = 0.6; m.shininess = 8;
-    const c = globe.controls();
-    c.enableZoom = false; c.enablePan = false; c.enableRotate = false; c.autoRotate = false;
-    box.style.opacity = 1;
-    document.getElementById('globeFallback').style.visibility = 'hidden';
-  }
-
-  function play() {
-    timers.forEach(clearTimeout); timers = []; cancelAnimationFrame(raf);
-    globe.ringsData([]);
-    if (reduce) { globe.pointOfView(NEAR, 0); setKz(BLUE); return; }
-    globe.pointOfView(FAR, 0); setKz(WHITE);
-    timers.push(setTimeout(() => globe.pointOfView(NEAR, 2600), 1100));
-    // после приближения: белый -> голубой за 1,4 с, затем мягкое «дыхание» свечения и кольца
-    timers.push(setTimeout(() => {
-      const t0 = performance.now();
-      const tick = now => {
-        const k = (now - t0) / 1400;
-        if (k < 1) setKz(mix(WHITE, BLUE, ease(k)), 0.25 * ease(k));
-        else setKz(BLUE, 0.25 + 0.3 * Math.sin((now - t0 - 1400) / 700) ** 2);
-        if (k >= 1 && !globe.ringsData().length) globe.ringsData([{ lat: 48, lng: 67.5 }]);
-        raf = requestAnimationFrame(tick);
-      };
-      raf = requestAnimationFrame(tick);
-    }, 3700));
-  }
-
-  async function ensure() {
-    if (globe || loading) return; loading = true;
-    try {
-      if (!window.Globe) await load('assets/globe.gl.min.js');
-      if (!window.WORLD_COUNTRIES) await load('assets/countries.js');
-      build(); sync(); if (slide.classList.contains('active')) play();
-    } catch (e) { console.warn('3D‑глобус недоступен, показываю картинку', e); }
-  }
-
-  // рисуем только когда слайд открыт, чтобы не нагружать видеокарту
-  function sync() {
-    if (!globe) return;
-    if (slide.classList.contains('active')) globe.resumeAnimation(); else { globe.pauseAnimation(); cancelAnimationFrame(raf); timers.forEach(clearTimeout); }
-  }
-  let was = false;
-  new MutationObserver(() => {
-    const on = slide.classList.contains('active');
-    if (on) ensure();
-    if (on && !was && globe) play();
-    was = on; sync();
-  }).observe(slide, { attributes: true, attributeFilter: ['class'] });
-  if (slide.classList.contains('active')) ensure();
-  else addEventListener('load', () => setTimeout(ensure, 1500)); // заранее, пока смотрят первые слайды
 })();
 </script>
 </body>
